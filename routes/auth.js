@@ -171,6 +171,108 @@ router.post('/student/register', async (req, res) => {
   }
 });
 
+// POST /api/change-password (Admin — must be logged in)
+router.post('/change-password', async (req, res) => {
+  if (!req.session.userId || req.session.role !== 'admin') {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+  const { current_password, new_password } = req.body;
+  if (!current_password || !new_password) {
+    return res.status(400).json({ success: false, message: 'Current and new password are required' });
+  }
+  if (String(new_password).trim().length < 6) {
+    return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+  }
+  try {
+    const user = db.users.findOne(u => u.user_id === req.session.userId);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    const isMatch = await bcrypt.compare(String(current_password).trim(), user.password);
+    if (!isMatch) return res.status(400).json({ success: false, message: 'Current password is incorrect' });
+    const hashed = await bcrypt.hash(String(new_password).trim(), 10);
+    // Update directly in the Mongoose model and the in-memory cache
+    const mongoose = require('mongoose');
+    const User = mongoose.model('User');
+    await User.findOneAndUpdate({ user_id: user.user_id }, { password: hashed, updated_at: new Date().toISOString() });
+    user.password = hashed; // Update cache so bcrypt compare works until next restart
+    res.json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
+// POST /api/admin/reset-password (Admin forgot password — verifies username exists then resets)
+router.post('/admin/reset-password', async (req, res) => {
+  const { username, new_password } = req.body;
+  if (!username || !new_password) {
+    return res.status(400).json({ success: false, message: 'Username and new password are required' });
+  }
+  if (String(new_password).trim().length < 6) {
+    return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+  }
+  try {
+    const user = db.users.findOne(u => u.username === username.trim());
+    if (!user) return res.status(404).json({ success: false, message: 'No admin account found with that username' });
+    const hashed = await bcrypt.hash(String(new_password).trim(), 10);
+    const mongoose = require('mongoose');
+    const User = mongoose.model('User');
+    await User.findOneAndUpdate({ user_id: user.user_id }, { password: hashed, updated_at: new Date().toISOString() });
+    user.password = hashed; // Update in-memory cache
+    res.json({ success: true, message: 'Admin password reset successfully. You can now log in.' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
+// POST /api/student/change-password (Student — must be logged in)
+router.post('/student/change-password', async (req, res) => {
+  if (!req.session.userId || req.session.role !== 'student') {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+  const { current_password, new_password } = req.body;
+  if (!current_password || !new_password) {
+    return res.status(400).json({ success: false, message: 'Current and new password are required' });
+  }
+  if (String(new_password).trim().length < 6) {
+    return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+  }
+  try {
+    const student = db.students.findOne(s => s.student_id === req.session.userId);
+    if (!student) return res.status(404).json({ success: false, message: 'Student not found' });
+    const isMatch = await bcrypt.compare(String(current_password).trim(), student.password);
+    if (!isMatch) return res.status(400).json({ success: false, message: 'Current password is incorrect' });
+    const hashed = await bcrypt.hash(String(new_password).trim(), 10);
+    db.students.update(student.student_id, { password: hashed });
+    res.json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
+// POST /api/student/reset-password (Forgot password — verify admission_number + full_name, then set new password)
+router.post('/student/reset-password', async (req, res) => {
+  const { admission_number, full_name, new_password } = req.body;
+  if (!admission_number || !full_name || !new_password) {
+    return res.status(400).json({ success: false, message: 'Admission number, full name, and new password are required' });
+  }
+  if (String(new_password).trim().length < 6) {
+    return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+  }
+  try {
+    const student = db.students.findOne(s =>
+      s.admission_number.toUpperCase() === admission_number.trim().toUpperCase() &&
+      s.full_name.toLowerCase().trim() === full_name.trim().toLowerCase()
+    );
+    if (!student) {
+      return res.status(404).json({ success: false, message: 'No student found with that admission number and name combination' });
+    }
+    const hashed = await bcrypt.hash(String(new_password).trim(), 10);
+    db.students.update(student.student_id, { password: hashed });
+    res.json({ success: true, message: 'Password reset successfully. You can now log in with your new password.' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
 // POST /api/logout
 router.post('/logout', (req, res) => {
   const role = req.session.role;

@@ -215,7 +215,7 @@
             <button class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block">
                 <span class="material-symbols-outlined text-on-surface-variant">help</span>
             </button>
-            <button class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block">
+            <button onclick="openSettingsModal()" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block" title="Settings">
                 <span class="material-symbols-outlined text-on-surface-variant">settings</span>
             </button>
 
@@ -228,8 +228,14 @@
                     <span id="profileName" class="font-bold text-on-surface text-sm">Admin User</span>
                     <span id="profileRole" class="text-outline text-[10px] uppercase font-semibold mt-0.5">Hostel Supervisor</span>
                 </div>
-                <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden">
-                    <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA75ojBV-s9Bn-foNoXwbMSGA2pYQUCuv8fKcWTTCEp705Ew4QL9lGfbxh4KpeidH1nj3crTcxxkOZzPykqvixYbgnq6AEIi0eHe-tqEdb4rdYRPz_xeceLz0SU1nl7-T8GDH2O0S4WYuD1iAatFl3Bix_kdrgeUgAIq9vyguBIkSR1y-MC8gBqeIqLhahxe3NzVS2iVBufmh6MMSBAIfZrNwwtEU2ocdhc-nhy7_uL3gK9IcsmFmuAqGLMdVDU0izcb-qNAWJDeb4"/>
+                <!-- Admin profile photo - click to change -->
+                <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden cursor-pointer relative group" onclick="document.getElementById('adminPhotoInputStudents').click()" title="Click to change photo">
+                    <img id="adminProfilePhotoStudents" class="w-full h-full object-cover" src="" style="display:none">
+                    <div id="adminInitialsStudents" class="w-full h-full flex items-center justify-center bg-primary-container text-primary font-bold text-sm">A</div>
+                    <div class="hidden group-hover:flex absolute inset-0 bg-black/40 items-center justify-center rounded-full">
+                        <span class="material-symbols-outlined text-white text-sm">photo_camera</span>
+                    </div>
+                    <input type="file" id="adminPhotoInputStudents" accept="image/*" class="hidden" onchange="uploadAdminPhoto(event,'adminProfilePhotoStudents','adminInitialsStudents')">
                 </div>
                 <span class="material-symbols-outlined text-outline text-sm">arrow_drop_down</span>
                 
@@ -338,6 +344,7 @@
                             <th class="py-3 px-4 text-left">Admission No.</th>
                             <th class="py-3 px-4 text-center">Gender</th>
                             <th class="py-3 px-4 text-left">Course</th>
+                            <th class="py-3 px-4 text-center">Room</th>
                             <th class="py-3 px-4 text-left">Phone</th>
                             <th class="py-3 px-4 text-left">Date Admitted</th>
                             <th class="py-3 px-4 text-center">Status</th>
@@ -346,7 +353,7 @@
                     </thead>
                     <tbody id="studentTableBody">
                         <tr>
-                            <td colspan="8" class="text-center py-12 text-outline">Loading student directory...</td>
+                            <td colspan="9" class="text-center py-12 text-outline">Loading student directory...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -795,23 +802,36 @@
             form.reset();
         }
 
+        let allAllocationsList = [];
+        let allRoomsList = [];
+
         async function loadStudents() {
             try {
-                const response = await fetch('/api/students');
-                if (response.status === 401) {
+                const [sRes, aRes, rRes] = await Promise.all([
+                    fetch('/api/students'),
+                    fetch('/api/allocations'),
+                    fetch('/api/rooms')
+                ]);
+                if (sRes.status === 401) {
                     window.location.href = 'index.html';
                     return;
                 }
-                const data = await response.json();
+                const sData = await sRes.json();
+                const aData = await aRes.json();
+                const rData = await rRes.json();
 
-                if (!data.success) {
-                    throw new Error(data.message || 'Unable to load students');
+                if (!sData.success) {
+                    throw new Error(sData.message || 'Unable to load students');
                 }
 
-                allStudentsList = data.data || [];
+                allStudentsList = sData.data || [];
+                allAllocationsList = (aData.success ? aData.data : []) || [];
+                allRoomsList = (rData.success ? rData.data : []) || [];
+
                 filterStudents();
             } catch (error) {
-                tableBody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500 font-semibold">${error.message}</td></tr>`;
+                const tableBody = document.getElementById('studentTableBody');
+                if (tableBody) tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-red-500 font-semibold">${error.message}</td></tr>`;
             }
         }
 
@@ -821,7 +841,7 @@
             const paginationKeys = document.getElementById('paginationKeys');
 
             if (!students.length) {
-                tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-12 text-outline">No matching students found.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center py-12 text-outline">No matching students found.</td></tr>';
                 paginationInfo.textContent = 'Showing 0 - 0 of 0 students';
                 paginationKeys.innerHTML = '';
                 return;
@@ -884,6 +904,13 @@
 
                 const dateAdmitted = formatDate(student.date_of_admission + 'T00:00:00');
 
+                // Find student active room allocation
+                const activeAlloc = allAllocationsList.find(a => a.student_id === student.student_id && a.status === 'active');
+                const allocRoom = activeAlloc ? allRoomsList.find(r => r.room_id === activeAlloc.room_id) : null;
+                const roomCell = allocRoom 
+                    ? `<span class="font-mono text-xs font-bold text-primary px-2 py-1 bg-primary-container/20 rounded">${esc(allocRoom.room_number)}</span>` 
+                    : `<span class="text-[11px] text-outline italic">Unallocated</span>`;
+
                 // Avatar colors
                 const colors = [
                     'bg-violet-100 text-violet-700',
@@ -918,6 +945,10 @@
                         <!-- Course -->
                         <td class="py-4 px-4 text-xs font-semibold text-on-surface-variant max-w-[150px] truncate">
                             ${esc(student.course || '-')}
+                        </td>
+                        <!-- Room -->
+                        <td class="py-4 px-4 text-center">
+                            ${roomCell}
                         </td>
                         <!-- Phone -->
                         <td class="py-4 px-4 text-xs font-medium text-on-surface-variant font-mono">
@@ -1187,8 +1218,124 @@
             }
         }
 
-        // Initialize check
+        // Profile photo upload helper
+        function uploadAdminPhoto(e, imgId = 'adminProfilePhotoStudents', initialsId = 'adminInitialsStudents') {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64 = evt.target.result;
+                localStorage.setItem('adminProfilePhoto', base64);
+                applyAdminPhoto(imgId, initialsId);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applyAdminPhoto(imgId = 'adminProfilePhotoStudents', initialsId = 'adminInitialsStudents') {
+            const saved = localStorage.getItem('adminProfilePhoto');
+            const img = document.getElementById(imgId);
+            const init = document.getElementById(initialsId);
+            if (saved && img) {
+                img.src = saved;
+                img.style.display = 'block';
+                if (init) init.style.display = 'none';
+            }
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+            document.getElementById('settingsError').classList.add('hidden');
+            document.getElementById('settingsSuccess').classList.add('hidden');
+            document.getElementById('changePwdForm').reset();
+        }
+
+        async function submitAdminChangePassword(e) {
+            e.preventDefault();
+            const current_password = document.getElementById('currPwd').value.trim();
+            const new_password = document.getElementById('newPwd').value.trim();
+            const confirm_password = document.getElementById('confPwd').value.trim();
+            const errEl = document.getElementById('settingsError');
+            const okEl = document.getElementById('settingsSuccess');
+
+            errEl.classList.add('hidden');
+            okEl.classList.add('hidden');
+
+            if (new_password !== confirm_password) {
+                errEl.textContent = 'New passwords do not match.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (new_password.length < 6) {
+                errEl.textContent = 'New password must be at least 6 characters.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ current_password, new_password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    okEl.textContent = data.message;
+                    okEl.classList.remove('hidden');
+                    setTimeout(() => closeSettingsModal(), 2000);
+                } else {
+                    errEl.textContent = data.message;
+                    errEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                errEl.textContent = 'Network error. Please try again.';
+                errEl.classList.remove('hidden');
+            }
+        }
+
+        // Initialize check & load saved photo
         checkAuth();
+        applyAdminPhoto();
     </script>
+
+    <!-- Admin Settings / Change Password Modal -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 relative">
+            <button onclick="closeSettingsModal()" class="absolute right-4 top-4 p-1 hover:bg-slate-100 rounded-full transition-colors">
+                <span class="material-symbols-outlined text-outline">close</span>
+            </button>
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary-container/20 text-primary mb-4">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                </div>
+                <h2 class="text-xl font-bold text-primary">Admin Account Settings</h2>
+                <p class="text-xs text-on-surface-variant mt-1">Update your portal security password.</p>
+            </div>
+            <div id="settingsError" class="hidden p-3 mb-4 text-xs rounded-lg bg-red-50 border border-red-200 text-red-700"></div>
+            <div id="settingsSuccess" class="hidden p-3 mb-4 text-xs rounded-lg bg-green-50 border border-green-200 text-green-700"></div>
+            <form id="changePwdForm" class="space-y-4" onsubmit="submitAdminChangePassword(event)">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Current Password</label>
+                    <input type="password" id="currPwd" required placeholder="••••••••"
+                        class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">New Password</label>
+                    <input type="password" id="newPwd" required placeholder="Min. 6 characters"
+                        class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Confirm New Password</label>
+                    <input type="password" id="confPwd" required placeholder="Repeat new password"
+                        class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary outline-none text-sm">
+                </div>
+                <button type="submit" class="w-full py-3 bg-[#000666] hover:bg-primary-container text-white font-semibold rounded-lg shadow transition-all text-sm">
+                    Change Password
+                </button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

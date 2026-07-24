@@ -281,7 +281,98 @@
         });
 
         function forgotPassword() {
-            alert('🔒 Reset Password Request:\nPlease visit the University Hostel Warden\'s office with your student ID card to verify your identity and reset your portal password.');
+            document.getElementById('studentForgotModal').classList.remove('hidden');
+        }
+        function closeStudentForgotModal() {
+            document.getElementById('studentForgotModal').classList.add('hidden');
+            document.getElementById('sfError').classList.add('hidden');
+            document.getElementById('sfSuccess').classList.add('hidden');
+        }
+    </script>
+
+    <!-- Student Forgot Password Modal -->
+    <div id="studentForgotModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 relative">
+            <button onclick="closeStudentForgotModal()" class="absolute right-4 top-4 p-1 hover:bg-slate-100 rounded-full transition-colors">
+                <span class="material-symbols-outlined text-outline">close</span>
+            </button>
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-teal-100 mb-4">
+                    <span class="material-symbols-outlined text-teal-600 text-2xl">lock_reset</span>
+                </div>
+                <h2 class="text-xl font-bold text-primary">Reset Student Password</h2>
+                <p class="text-sm text-on-surface-variant mt-2">Enter your admission number and full name to verify your identity, then set a new password.</p>
+            </div>
+            <div id="sfError" class="hidden p-3 mb-4 text-sm rounded-lg bg-red-50 border border-red-200 text-red-700"></div>
+            <div id="sfSuccess" class="hidden p-3 mb-4 text-sm rounded-lg bg-green-50 border border-green-200 text-green-700"></div>
+            <form class="space-y-4" onsubmit="submitStudentReset(event)">
+                <div>
+                    <label class="block text-sm font-semibold text-on-surface mb-1">Admission Number</label>
+                    <input type="text" id="sfAdmNo" required placeholder="e.g. ADM001"
+                        class="w-full px-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-on-surface mb-1">Full Name (as registered)</label>
+                    <input type="text" id="sfFullName" required placeholder="Your full name"
+                        class="w-full px-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-on-surface mb-1">New Password</label>
+                    <input type="password" id="sfNewPwd" required placeholder="Min. 6 characters"
+                        class="w-full px-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-on-surface mb-1">Confirm New Password</label>
+                    <input type="password" id="sfConfirmPwd" required placeholder="Repeat new password"
+                        class="w-full px-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary outline-none text-sm">
+                </div>
+                <button type="submit" class="w-full py-3 bg-[#000666] hover:bg-primary-container text-white font-semibold rounded-lg transition-all">
+                    Reset Password
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function submitStudentReset(e) {
+            e.preventDefault();
+            const admission_number = document.getElementById('sfAdmNo').value.trim();
+            const full_name = document.getElementById('sfFullName').value.trim();
+            const new_password = document.getElementById('sfNewPwd').value.trim();
+            const confirm_password = document.getElementById('sfConfirmPwd').value.trim();
+            const errEl = document.getElementById('sfError');
+            const okEl = document.getElementById('sfSuccess');
+            errEl.classList.add('hidden');
+            okEl.classList.add('hidden');
+            if (new_password !== confirm_password) {
+                errEl.textContent = 'Passwords do not match.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (new_password.length < 6) {
+                errEl.textContent = 'Password must be at least 6 characters.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            try {
+                const res = await fetch('/api/student/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admission_number, full_name, new_password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    okEl.textContent = data.message;
+                    okEl.classList.remove('hidden');
+                    setTimeout(() => closeStudentForgotModal(), 3000);
+                } else {
+                    errEl.textContent = data.message;
+                    errEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                errEl.textContent = 'Network error. Please try again.';
+                errEl.classList.remove('hidden');
+            }
         }
     </script>
 </body>
