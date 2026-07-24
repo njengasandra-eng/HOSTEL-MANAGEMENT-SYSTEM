@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Student Login - Everest University HMS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#67d9c9",
+                        "surface-container-highest": "#e4e1ea",
+                        "on-secondary-fixed": "#00201c",
+                        "outline-variant": "#c6c5d4",
+                        "on-background": "#1b1b21",
+                        "secondary": "#006a60",
+                        "secondary-container": "#85f6e5",
+                        "inverse-primary": "#bdc2ff",
+                        "on-secondary-container": "#007166",
+                        "error-container": "#ffdad6",
+                        "outline": "#767683",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#7b2e12",
+                        "on-secondary-fixed-variant": "#005048",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#390c00",
+                        "on-surface": "#1b1b21",
+                        "surface-bright": "#fbf8ff",
+                        "surface-tint": "#4c56af",
+                        "background": "#fbf8ff",
+                        "on-primary-fixed-variant": "#343d96",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "surface-dim": "#dbd9e1",
+                        "primary-fixed": "#e0e0ff",
+                        "surface": "#fbf8ff",
+                        "tertiary": "#380b00",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdbd0",
+                        "surface-container-low": "#f5f2fb",
+                        "inverse-surface": "#303036",
+                        "surface-variant": "#e4e1ea",
+                        "on-primary-container": "#8690ee",
+                        "on-surface-variant": "#454652",
+                        "surface-container": "#efecf5",
+                        "tertiary-container": "#5c1800",
+                        "primary": "#000666",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#000767",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#e17c5a",
+                        "primary-container": "#1a237e",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#85f6e5",
+                        "surface-container-high": "#eae7ef",
+                        "inverse-on-surface": "#f2eff8",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "xl": "32px",
+                        "sm": "12px",
+                        "lg": "24px",
+                        "container-margin": "16px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen pb-12 flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="w-full flex items-center px-6 h-16 bg-surface-container-lowest border-b border-outline-variant">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-2xl" data-icon="corporate_fare">corporate_fare</span>
+            <span class="text-headline-sm font-bold text-primary">HMS Student Portal</span>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow flex flex-col items-center justify-center px-4 py-8">
+        
+        <div class="w-full max-w-[420px] bg-white border border-outline-variant rounded-2xl shadow-[0px_4px_12px_rgba(0,0,0,0.05)] p-8">
+            <div class="text-center mb-6">
+                <!-- Icon Circle -->
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary-container text-white mb-4 text-2xl">
+                    <span class="material-symbols-outlined text-2xl" data-icon="school">school</span>
+                </div>
+                <h2 class="text-headline-md font-bold text-primary mb-1">Welcome Back</h2>
+                <p class="text-body-md text-on-surface-variant text-center">Please enter your credentials to access the hostel portal.</p>
+            </div>
+
+            <!-- Alerts -->
+            <div class="hidden p-4 mb-4 text-sm rounded-lg bg-red-50 border border-red-200 text-red-700" id="alertError"></div>
+            <div class="hidden p-4 mb-4 text-sm rounded-lg bg-green-50 border border-green-200 text-green-700" id="alertSuccess"></div>
+
+            <form id="loginForm" class="space-y-5">
+                <!-- Admission Number -->
+                <div>
+                    <label for="admission_number" class="block text-body-md font-semibold text-on-surface mb-1.5">Admission Number</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg" data-icon="badge">badge</span>
+                        <input type="text" id="admission_number" name="admission_number" required 
+                               class="w-full pl-12 pr-4 py-3 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary focus:border-transparent outline-none transition-all placeholder:text-outline/40 text-on-surface text-sm" 
+                               placeholder="ADMXXXX">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-body-md font-semibold text-on-surface mb-1.5">Password</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg" data-icon="lock">lock</span>
+                        <input type="password" id="password" name="password" required 
+                               class="w-full pl-12 pr-12 py-3 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary focus:border-transparent outline-none transition-all placeholder:text-outline/40 text-on-surface text-sm" 
+                               placeholder="••••••••">
+                        <button type="button" id="passwordToggle" aria-label="Show password" 
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors focus:outline-none">
+                            <span class="material-symbols-outlined text-lg">visibility</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="hidden text-center py-2" id="loading">
+                    <div class="inline-block w-6 h-6 border-2 border-secondary border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs text-secondary mt-1">Verifying credentials...</p>
+                </div>
+
+                <!-- Checkbox & Link -->
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center gap-2 text-on-surface-variant font-medium cursor-pointer">
+                        <input type="checkbox" name="remember" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        Remember me
+                    </label>
+                    <a href="javascript:void(0)" onclick="forgotPassword()" class="text-secondary font-semibold hover:underline transition-colors">Forgot Password?</a>
+                </div>
+
+                <button type="submit" id="submitBtn" 
+                        class="w-full py-3 px-4 bg-[#000666] hover:bg-primary-container active:scale-[0.98] text-white font-semibold rounded-lg shadow-md hover:shadow-primary/20 transition-all duration-150 flex items-center justify-center gap-2">
+                    <span>Login</span>
+                    <span class="material-symbols-outlined text-lg">login</span>
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm text-on-surface-variant">
+                Don't have an account? <a href="student-register.html" class="text-secondary font-bold hover:underline transition-colors">Register</a>
+            </div>
+        </div>
+
+        <!-- Switch to Admin Login -->
+        <a href="index.html" class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-semibold rounded-full border border-outline-variant/30 shadow-sm transition-all text-sm active:scale-95">
+            <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+            <span>Switch to Admin Login</span>
+        </a>
+
+    </main>
+
+    <!-- Footer Copyright -->
+    <footer class="w-full text-center text-xs text-outline/80 py-4">
+        © 2024 University Hostel Management System. All Rights Reserved.
+    </footer>
+
+    <script>
+        // Check if already logged in and redirect to dashboard
+        fetch('/api/auth/me')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.user.role === 'student') {
+                        window.location.href = 'student-dashboard.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+            })
+            .catch(() => {});
+
+        const loginForm = document.getElementById('loginForm');
+        const alertError = document.getElementById('alertError');
+        const alertSuccess = document.getElementById('alertSuccess');
+        const loading = document.getElementById('loading');
+        const submitBtn = document.getElementById('submitBtn');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const admission_number = document.getElementById('admission_number').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            // Clear alerts
+            alertError.classList.add('hidden');
+            alertSuccess.classList.add('hidden');
+
+            // Show loading
+            loading.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/student/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        admission_number: admission_number,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alertSuccess.textContent = data.message;
+                    alertSuccess.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'student-dashboard.html';
+                    }, 1500);
+                } else {
+                    alertError.textContent = data.message || 'Login failed';
+                    alertError.classList.remove('hidden');
+                }
+            } catch (error) {
+                alertError.textContent = 'Network error. Please try again.';
+                alertError.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        });
+
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordInput = document.getElementById('password');
+
+        passwordToggle.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            passwordToggle.querySelector('span').textContent = isPassword ? 'visibility_off' : 'visibility';
+            passwordToggle.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        });
+
+        function forgotPassword() {
+            alert('🔒 Reset Password Request:\nPlease visit the University Hostel Warden\'s office with your student ID card to verify your identity and reset your portal password.');
+        }
+    </script>
+</body>
+</html>

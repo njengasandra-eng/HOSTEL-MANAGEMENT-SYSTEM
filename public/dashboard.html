@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Dashboard - Hostel Management System</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#67d9c9",
+                        "surface-container-highest": "#e4e1ea",
+                        "on-secondary-fixed": "#00201c",
+                        "outline-variant": "#c6c5d4",
+                        "on-background": "#1b1b21",
+                        "secondary": "#006a60",
+                        "secondary-container": "#85f6e5",
+                        "inverse-primary": "#bdc2ff",
+                        "on-secondary-container": "#007166",
+                        "error-container": "#ffdad6",
+                        "outline": "#767683",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#7b2e12",
+                        "on-secondary-fixed-variant": "#005048",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#390c00",
+                        "on-surface": "#1b1b21",
+                        "surface-bright": "#fbf8ff",
+                        "surface-tint": "#4c56af",
+                        "background": "#fbf8ff",
+                        "on-primary-fixed-variant": "#343d96",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "surface-dim": "#dbd9e1",
+                        "primary-fixed": "#e0e0ff",
+                        "surface": "#fbf8ff",
+                        "tertiary": "#380b00",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdbd0",
+                        "surface-container-low": "#f5f2fb",
+                        "inverse-surface": "#303036",
+                        "surface-variant": "#e4e1ea",
+                        "on-primary-container": "#8690ee",
+                        "on-surface-variant": "#454652",
+                        "surface-container": "#efecf5",
+                        "tertiary-container": "#5c1800",
+                        "primary": "#000666",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#000767",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#e17c5a",
+                        "primary-container": "#1a237e",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#85f6e5",
+                        "surface-container-high": "#eae7ef",
+                        "inverse-on-surface": "#f2eff8",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "xl": "32px",
+                        "sm": "12px",
+                        "lg": "24px",
+                        "container-margin": "16px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .active-tab-indicator {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col md:flex-row">
+
+    <!-- Left Sidebar -->
+    <aside class="fixed top-0 left-0 w-64 h-full bg-white border-r border-outline-variant flex flex-col justify-between z-40 hidden md:flex transition-all duration-300">
+        <div>
+            <!-- Sidebar Logo Header -->
+            <div class="h-20 bg-[#000666] text-white flex items-center justify-between px-6 shadow-sm border-b border-primary/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-xl">corporate_fare</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold tracking-wide text-sm">Admin Portal</span>
+                        <span class="text-[10px] text-blue-200 uppercase tracking-widest font-semibold">Central Management</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Navigation Links -->
+            <nav class="p-4 space-y-1">
+                <!-- Dashboard (ACTIVE) -->
+                <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all bg-primary-fixed text-primary">
+                    <span class="material-symbols-outlined active-tab-indicator">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <!-- Students -->
+                <a href="students.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">group</span>
+                    <span>Students</span>
+                </a>
+                <!-- Rooms -->
+                <a href="rooms.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">bed</span>
+                    <span>Room Inventory</span>
+                </a>
+                <!-- Allocations -->
+                <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">assignment_turned_in</span>
+                    <span>Allocations</span>
+                </a>
+                <!-- Payments -->
+                <a href="payments.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">payments</span>
+                    <span>Payments</span>
+                </a>
+                <!-- Reports -->
+                <a href="reports.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">description</span>
+                    <span>Reports</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Sidebar Bottom Logout -->
+        <div class="p-4 border-t border-outline-variant/30">
+            <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 transition-all">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Top Header Bar -->
+    <header class="fixed top-0 left-0 md:left-64 right-0 h-16 bg-white border-b border-outline-variant flex justify-between items-center px-6 z-30 transition-all duration-300">
+        <div class="flex items-center gap-4 flex-grow max-w-lg">
+            <!-- Sidebar Collapse Toggle Button -->
+            <button id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 text-on-surface-variant flex items-center justify-center focus:outline-none" title="Collapse / Expand Sidebar">
+                <span id="sidebarToggleIcon" class="material-symbols-outlined text-xl">menu_open</span>
+            </button>
+            <span class="text-headline-sm font-bold text-primary">Academic HMS</span>
+            
+            <!-- Search Bar (Desktop only) -->
+            <div class="relative flex-grow hidden md:block">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+                <input type="text" placeholder="Search records..." class="w-full pl-10 pr-4 py-2 bg-surface-container border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <!-- Admin Notification Bell -->
+            <div class="relative">
+                <button id="adminNotifBtn" onclick="toggleAdminNotifDropdown(event)" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 relative text-on-surface-variant focus:outline-none" title="Notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span id="adminNotifRedDot" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white animate-pulse"></span>
+                </button>
+
+                <!-- Admin Notifications Dropdown Menu -->
+                <div id="adminNotifDropdown" class="hidden absolute right-0 top-12 w-80 sm:w-96 bg-white border border-outline-variant rounded-2xl shadow-2xl z-50 overflow-hidden text-sm">
+                    <div class="p-3 bg-slate-50 border-b border-outline-variant/30 flex justify-between items-center">
+                        <span class="font-bold text-primary text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-base">notifications</span>
+                            Admin Notifications
+                        </span>
+                        <span id="adminNotifBadgeCount" class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">0 unread</span>
+                    </div>
+
+                    <div id="adminNotifList" class="max-h-80 overflow-y-auto divide-y divide-outline-variant/20 p-1">
+                        <div class="p-4 text-center text-xs text-outline font-medium">No recent notifications</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block">
+                <span class="material-symbols-outlined text-on-surface-variant">help</span>
+            </button>
+            <button class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block">
+                <span class="material-symbols-outlined text-on-surface-variant">settings</span>
+            </button>
+
+            <!-- Divider Line -->
+            <div class="h-8 w-[1px] bg-outline-variant hidden sm:block"></div>
+
+            <!-- Profile Info dropdown trigger -->
+            <button id="profileBtn" class="flex items-center gap-2 p-1 hover:bg-outline-variant/20 rounded-lg transition-colors text-left relative">
+                <div class="hidden sm:flex flex-col items-end text-xs leading-none pr-1">
+                    <span id="profileName" class="font-bold text-on-surface text-sm">Admin User</span>
+                    <span id="profileRole" class="text-outline text-[10px] uppercase font-semibold mt-0.5">Hostel Supervisor</span>
+                </div>
+                <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden">
+                    <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA75ojBV-s9Bn-foNoXwbMSGA2pYQUCuv8fKcWTTCEp705Ew4QL9lGfbxh4KpeidH1nj3crTcxxkOZzPykqvixYbgnq6AEIi0eHe-tqEdb4rdYRPz_xeceLz0SU1nl7-T8GDH2O0S4WYuD1iAatFl3Bix_kdrgeUgAIq9vyguBIkSR1y-MC8gBqeIqLhahxe3NzVS2iVBufmh6MMSBAIfZrNwwtEU2ocdhc-nhy7_uL3gK9IcsmFmuAqGLMdVDU0izcb-qNAWJDeb4"/>
+                </div>
+                <span class="material-symbols-outlined text-outline text-sm">arrow_drop_down</span>
+                
+                <!-- Dropdown Menu inside button -->
+                <div id="profileMenu" class="hidden absolute right-0 top-12 w-48 bg-white border border-outline-variant rounded-xl shadow-xl py-2 z-50 text-sm text-on-surface">
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background transition-colors">
+                        <span class="material-symbols-outlined text-sm">settings</span>
+                        <span>System Settings</span>
+                    </a>
+                    <hr class="border-outline-variant/30 my-1">
+                    <button onclick="logout()" class="w-full flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 transition-colors text-left">
+                        <span class="material-symbols-outlined text-sm">logout</span>
+                        <span>Log Out</span>
+                    </button>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow md:pl-64 pt-20 px-6 max-w-[1600px] mx-auto space-y-8 pb-24 md:pb-8 w-full">
+        
+        <!-- Welcome Section -->
+        <section class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h2 id="welcomeMessage" class="text-3xl font-bold tracking-tight text-primary">System Overview</h2>
+                <p class="text-body-md text-on-surface-variant mt-1">Institutional occupancy and financial summary for the current academic semester.</p>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Card 1: TOTAL STUDENTS -->
+            <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.08)] transition-all flex justify-between items-start">
+                <div class="space-y-1">
+                    <span class="text-label-sm text-outline-variant uppercase tracking-wider font-semibold">Total Students</span>
+                    <p id="statStudents" class="text-headline-lg font-bold text-primary leading-none">0</p>
+                    <div class="flex items-center gap-1 text-[11px] text-[#006a60] font-semibold mt-1">
+                        <span class="material-symbols-outlined text-xs">trending_up</span>
+                        <span>+12 from last week</span>
+                    </div>
+                </div>
+                <div class="p-3 bg-primary-container/10 text-primary rounded-xl">
+                    <span class="material-symbols-outlined text-xl">groups</span>
+                </div>
+            </div>
+            <!-- Card 2: TOTAL CAPACITY -->
+            <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.08)] transition-all flex justify-between items-start">
+                <div class="space-y-1">
+                    <span class="text-label-sm text-outline-variant uppercase tracking-wider font-semibold">Total Capacity</span>
+                    <p id="statBeds" class="text-headline-lg font-bold text-primary leading-none">200</p>
+                    <p class="text-[11px] text-outline-variant mt-1">Standardized Units</p>
+                </div>
+                <div class="p-3 bg-primary-container/10 text-primary rounded-xl">
+                    <span class="material-symbols-outlined text-xl">domain</span>
+                </div>
+            </div>
+            <!-- Card 3: OCCUPIED BEDS -->
+            <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.08)] transition-all flex justify-between items-start">
+                <div class="space-y-1">
+                    <span class="text-label-sm text-outline-variant uppercase tracking-wider font-semibold">Occupied Beds</span>
+                    <p id="statOccupied" class="text-headline-lg font-bold text-secondary leading-none">0</p>
+                    <p id="occupiedPercentage" class="text-[11px] text-outline-variant mt-1">0% Total Occupancy</p>
+                </div>
+                <div class="p-3 bg-secondary-container/20 text-secondary rounded-xl">
+                    <span class="material-symbols-outlined text-xl text-secondary">check_circle</span>
+                </div>
+            </div>
+            <!-- Card 4: AVAILABLE BEDS -->
+            <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.08)] transition-all flex justify-between items-start">
+                <div class="space-y-1">
+                    <span class="text-label-sm text-outline-variant uppercase tracking-wider font-semibold">Available Beds</span>
+                    <p id="statAvailable" class="text-headline-lg font-bold text-secondary leading-none">0</p>
+                    <p class="text-[11px] text-outline-variant mt-1">Ready for Allocation</p>
+                </div>
+                <div class="p-3 bg-secondary-container/20 text-secondary rounded-xl">
+                    <span class="material-symbols-outlined text-xl">calendar_today</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Content Rows -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Capacity Progress -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)] space-y-5">
+                    <h3 class="text-lg font-bold text-primary">Capacity Progress</h3>
+                    
+                    <!-- Batian Block -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm font-semibold">
+                            <span class="text-on-surface">Batian Block</span>
+                            <span id="batianFraction" class="text-primary">0/100</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div id="batianBar" class="h-full bg-primary rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <p class="text-[11px] text-outline">Male Students</p>
+                    </div>
+
+                    <!-- Nelion Block -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm font-semibold">
+                            <span class="text-on-surface">Nelion Block</span>
+                            <span id="nelionFraction" class="text-secondary">0/100</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div id="nelionBar" class="h-full bg-secondary rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <p class="text-[11px] text-outline">Female Students</p>
+                    </div>
+                </div>
+
+                <!-- Notice Card -->
+                <div class="bg-surface-container border border-outline-variant/60 rounded-xl p-5 shadow-[0px_2px_4px_rgba(0,0,0,0.03)] space-y-2 text-sm leading-relaxed text-on-surface-variant">
+                    <div class="flex items-center gap-2 font-bold text-primary mb-1">
+                        <span class="material-symbols-outlined text-lg">info</span>
+                        <span>Notice</span>
+                    </div>
+                    <p>Annual maintenance scheduled for Batian Block, Wing B (Rooms 201-220) starting next Friday.</p>
+                </div>
+            </div>
+
+            <!-- Right Column: Recent Allocations & Payments -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Recent Allocations -->
+                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)]">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-primary">Recent Allocations</h3>
+                        <a href="allocations.html" class="text-xs text-secondary hover:underline font-semibold flex items-center gap-1">
+                            VIEW ALL <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                        </a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead>
+                                <tr class="border-b border-outline-variant/50 text-[11px] font-bold uppercase tracking-wider text-outline">
+                                    <th class="py-3 px-2">Student Name</th>
+                                    <th class="py-3 px-2">Room ID</th>
+                                    <th class="py-3 px-2">Status</th>
+                                    <th class="py-3 px-2 text-right">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentAllocationsTable">
+                                <tr><td colspan="4" class="text-center py-6 text-outline">Loading allocations...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Payments -->
+                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)]">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-primary">Recent Payments</h3>
+                        <a href="payments.html" class="text-xs text-secondary hover:underline font-semibold flex items-center gap-1">
+                            FINANCIALS <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                        </a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead>
+                                <tr class="border-b border-outline-variant/50 text-[11px] font-bold uppercase tracking-wider text-outline">
+                                    <th class="py-3 px-2">Transaction ID</th>
+                                    <th class="py-3 px-2">Amount</th>
+                                    <th class="py-3 px-2">Method</th>
+                                    <th class="py-3 px-2 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentPaymentsTable">
+                                <tr><td colspan="4" class="text-center py-6 text-outline">Loading payments...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    </main>
+
+    <script>
+        function toggleSidebarCollapse() {
+            const sidebar = document.querySelector('aside');
+            const header = document.querySelector('header');
+            const main = document.querySelector('main');
+            const icon = document.getElementById('sidebarToggleIcon');
+            const isHidden = sidebar.classList.contains('hidden');
+
+            if (isHidden) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
+                if (header) header.style.left = '';
+                if (main) main.style.marginLeft = '';
+                if (icon) icon.textContent = 'menu_open';
+                localStorage.setItem('adminSidebarCollapsed', 'false');
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
+                if (header) header.style.left = '0px';
+                if (main) main.style.marginLeft = '0px';
+                if (icon) icon.textContent = 'menu';
+                localStorage.setItem('adminSidebarCollapsed', 'true');
+            }
+        }
+
+        (function applySavedSidebarState() {
+            if (localStorage.getItem('adminSidebarCollapsed') === 'true') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    const sidebar = document.querySelector('aside');
+                    const header = document.querySelector('header');
+                    const main = document.querySelector('main');
+                    const icon = document.getElementById('sidebarToggleIcon');
+                    if (sidebar) {
+                        sidebar.classList.add('hidden');
+                        sidebar.classList.remove('flex');
+                    }
+                    if (header) header.style.left = '0px';
+                    if (main) main.style.marginLeft = '0px';
+                    if (icon) icon.textContent = 'menu';
+                });
+            }
+        })();
+
+        let currentUser = null;
+
+        function formatDate(dateInput) {
+            if (!dateInput) return '-';
+            const d = new Date(dateInput);
+            if (isNaN(d.getTime())) return String(dateInput);
+            
+            const day = d.getDate();
+            let suffix = 'th';
+            if (day < 11 || day > 13) {
+                switch (day % 10) {
+                    case 1: suffix = 'st'; break;
+                    case 2: suffix = 'nd'; break;
+                    case 3: suffix = 'rd'; break;
+                }
+            }
+            const month = d.toLocaleString('en-GB', { month: 'short' });
+            const year = d.getFullYear();
+            
+            return `${day} ${month} ${year}`;
+        }
+
+        function formatName(fullName) {
+            if (!fullName) return '-';
+            const parts = fullName.trim().split(/\s+/);
+            if (parts.length >= 2) {
+                return `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}`;
+            }
+            return fullName;
+        }
+
+        // Verify session status
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me');
+                const data = await response.json();
+                
+                if (!data.success || data.user.role !== 'admin') {
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                currentUser = data.user;
+                document.getElementById('profileName').textContent = currentUser.fullName;
+                document.getElementById('profileRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) + ' Admin';
+                
+                loadDashboardData();
+                loadAdminNotifications();
+            } catch (err) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function toggleAdminNotifDropdown(e) {
+            if (e) e.stopPropagation();
+            const dd = document.getElementById('adminNotifDropdown');
+            if (dd) dd.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dd = document.getElementById('adminNotifDropdown');
+            const btn = document.getElementById('adminNotifBtn');
+            if (dd && !dd.classList.contains('hidden') && !dd.contains(e.target) && (btn && !btn.contains(e.target))) {
+                dd.classList.add('hidden');
+            }
+        });
+
+        async function loadAdminNotifications() {
+            const redDot = document.getElementById('adminNotifRedDot');
+            const badgeCount = document.getElementById('adminNotifBadgeCount');
+            const notifList = document.getElementById('adminNotifList');
+            if (!notifList) return;
+
+            let items = [];
+
+            try {
+                // 1. Fetch pending transfer requests
+                const trRes = await fetch('/api/allocations/transfer-requests');
+                const trData = await trRes.json();
+                if (trData.success && trData.data) {
+                    const pending = trData.data.filter(r => r.status === 'pending');
+                    pending.forEach(req => {
+                        items.push({
+                            id: 'tr-' + req.request_id,
+                            title: 'Pending Room Transfer Request',
+                            body: `${req.student_name} (${req.admission_number}) requested transfer to Room ${req.target_room_number} (${req.target_block}).`,
+                            icon: 'swap_horiz',
+                            iconColor: 'text-amber-600 bg-amber-100',
+                            unread: true,
+                            link: 'allocations.html',
+                            date: req.created_at
+                        });
+                    });
+                }
+
+                // 2. Fetch recent allocations
+                const allocRes = await fetch('/api/allocations');
+                const allocData = await allocRes.json();
+                if (allocData.success && allocData.data) {
+                    const recent = allocData.data.slice(0, 3);
+                    recent.forEach(alloc => {
+                        items.push({
+                            id: 'alloc-' + alloc.allocation_id,
+                            title: 'Active Room Allocation',
+                            body: `${alloc.full_name || 'Student'} allocated to Room ${alloc.room_number || 'N/A'} (${alloc.block_name || ''}).`,
+                            icon: 'meeting_room',
+                            iconColor: 'text-blue-600 bg-blue-100',
+                            unread: false,
+                            link: 'allocations.html',
+                            date: alloc.allocation_date
+                        });
+                    });
+                }
+
+                const unreadCount = items.filter(i => i.unread).length;
+
+                if (redDot) {
+                    if (unreadCount > 0) redDot.classList.remove('hidden');
+                    else redDot.classList.add('hidden');
+                }
+
+                if (badgeCount) {
+                    badgeCount.textContent = `${unreadCount} unread`;
+                }
+
+                if (items.length === 0) {
+                    notifList.innerHTML = '<div class="p-6 text-center text-xs text-outline font-medium">No recent notifications</div>';
+                    return;
+                }
+
+                notifList.innerHTML = items.map(item => `
+                    <a href="${item.link}" class="p-3 hover:bg-slate-50 transition-colors flex items-start gap-3 block ${item.unread ? 'bg-amber-50/40' : ''}">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${item.iconColor}">
+                            <span class="material-symbols-outlined text-base">${item.icon}</span>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="font-bold text-xs text-on-surface truncate">${item.title}</span>
+                                ${item.unread ? '<span class="w-2 h-2 rounded-full bg-red-600 shrink-0"></span>' : ''}
+                            </div>
+                            <p class="text-xs text-outline mt-0.5 leading-relaxed">${item.body}</p>
+                            <span class="text-[10px] text-outline-variant block mt-1">${formatDate(item.date)}</span>
+                        </div>
+                    </a>
+                `).join('');
+
+            } catch (err) {
+                console.error('Error loading admin notifications:', err);
+            }
+        }
+
+        // Fetch stats and lists
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/reports/dashboard-stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const stats = data.stats;
+                    document.getElementById('statStudents').textContent = Number(stats.total_students).toLocaleString();
+                    document.getElementById('statBeds').textContent = Number(stats.total_beds).toLocaleString();
+                    document.getElementById('statOccupied').textContent = Number(stats.occupied_beds).toLocaleString();
+                    document.getElementById('statAvailable').textContent = Number(stats.available_beds).toLocaleString();
+                    
+                    const occRate = stats.total_beds > 0 ? Math.round((stats.occupied_beds / stats.total_beds) * 100) : 0;
+                    document.getElementById('occupiedPercentage').textContent = `${occRate}% Total Occupancy`;
+
+                    // Render block stats
+                    const blocks = data.blocks_stats;
+                    if (blocks) {
+                        const updateBlockIndicator = (blockName, elementPrefix) => {
+                            const bData = blocks[blockName] || { total: 0, occupied: 0 };
+                            document.getElementById(`${elementPrefix}Fraction`).textContent = `${bData.occupied}/${bData.total}`;
+                            
+                            const percentage = bData.total > 0 ? Math.round((bData.occupied / bData.total) * 100) : 0;
+                            document.getElementById(`${elementPrefix}Bar`).style.width = `${percentage}%`;
+                        };
+                        
+                        updateBlockIndicator('Batian', 'batian');
+                        updateBlockIndicator('Nelion', 'nelion');
+                    }
+
+                    // Render recent allocations
+                    const allocBody = document.getElementById('recentAllocationsTable');
+                    if (data.recent_allocations.length === 0) {
+                        allocBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No allocations yet.</td></tr>';
+                    } else {
+                        allocBody.innerHTML = data.recent_allocations.slice(0, 3).map(a => {
+                            return `
+                                <tr class="border-b border-outline-variant/20 hover:bg-outline-variant/10 transition-colors">
+                                    <td class="py-3 px-2 font-semibold text-on-surface">${formatName(a.full_name)}</td>
+                                    <td class="py-3 px-2 text-primary font-semibold font-mono text-xs">${a.room_number}</td>
+                                    <td class="py-3 px-2">
+                                        <span class="px-2 py-0.5 bg-primary-fixed text-primary rounded text-[11px] font-bold">ASSIGNED</span>
+                                    </td>
+                                    <td class="py-3 px-2 text-right text-outline-variant text-xs">${formatDate(a.allocation_date)}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+
+                    // Fetch and Render recent payments
+                    const paymentsResponse = await fetch('/api/payments');
+                    const paymentsData = await paymentsResponse.json();
+                    if (paymentsData.success) {
+                        const paymentsBody = document.getElementById('recentPaymentsTable');
+                        if (paymentsData.data.length === 0) {
+                            paymentsBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No payments recorded.</td></tr>';
+                        } else {
+                            paymentsBody.innerHTML = paymentsData.data.slice(0, 3).map(p => {
+                                const statusClass = p.status === 'completed' ? 'bg-green-100 text-[#006a60]' : (p.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-[#ba1a1a]');
+                                const statusText = p.status === 'completed' ? 'SUCCESS' : (p.status === 'pending' ? 'PENDING' : 'DECLINED');
+                                const amountClass = p.status === 'completed' ? 'text-[#006a60] font-semibold' : 'text-[#ba1a1a] font-semibold';
+                                return `
+                                    <tr class="border-b border-outline-variant/20 hover:bg-outline-variant/10 transition-colors">
+                                        <td class="py-3 px-2 font-mono text-xs text-on-surface">${p.transaction_id || ('TXN-' + p.payment_id)}</td>
+                                        <td class="py-3 px-2 ${amountClass}">Ksh ${Number(p.amount).toLocaleString()}</td>
+                                        <td class="py-3 px-2 text-outline-variant text-xs">${p.payment_method || 'MPesa'}</td>
+                                        <td class="py-3 px-2 text-right">
+                                            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${statusClass}">${statusText}</span>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching dashboard stats:', err);
+            }
+        }
+
+        // Profile dropdown toggle
+        document.getElementById('profileBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.add('hidden');
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.querySelector('aside');
+        if (mobileMenuBtn && sidebar) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('flex');
+                sidebar.classList.add('shadow-2xl');
+            });
+            // Close sidebar on click outside
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 768 && !sidebar.contains(e.target) && e.target !== mobileMenuBtn) {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('flex');
+                }
+            });
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/logout', {
+                    method: 'POST'
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+            }
+        }
+
+        // Initialize check
+        checkAuth();
+    </script>
+</body>
+</html>

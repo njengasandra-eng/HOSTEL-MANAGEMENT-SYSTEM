@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Room Allocations - Hostel Management System</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#67d9c9",
+                        "surface-container-highest": "#e4e1ea",
+                        "on-secondary-fixed": "#00201c",
+                        "outline-variant": "#c6c5d4",
+                        "on-background": "#1b1b21",
+                        "secondary": "#006a60",
+                        "secondary-container": "#85f6e5",
+                        "inverse-primary": "#bdc2ff",
+                        "on-secondary-container": "#007166",
+                        "error-container": "#ffdad6",
+                        "outline": "#767683",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#7b2e12",
+                        "on-secondary-fixed-variant": "#005048",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#390c00",
+                        "on-surface": "#1b1b21",
+                        "surface-bright": "#fbf8ff",
+                        "surface-tint": "#4c56af",
+                        "background": "#fbf8ff",
+                        "on-primary-fixed-variant": "#343d96",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "surface-dim": "#dbd9e1",
+                        "primary-fixed": "#e0e0ff",
+                        "surface": "#fbf8ff",
+                        "tertiary": "#380b00",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdbd0",
+                        "surface-container-low": "#f5f2fb",
+                        "inverse-surface": "#303036",
+                        "surface-variant": "#e4e1ea",
+                        "on-primary-container": "#8690ee",
+                        "on-surface-variant": "#454652",
+                        "surface-container": "#efecf5",
+                        "tertiary-container": "#5c1800",
+                        "primary": "#000666",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#000767",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#e17c5a",
+                        "primary-container": "#1a237e",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#85f6e5",
+                        "surface-container-high": "#eae7ef",
+                        "inverse-on-surface": "#f2eff8",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "xl": "32px",
+                        "sm": "12px",
+                        "lg": "24px",
+                        "container-margin": "16px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .active-tab-indicator {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col md:flex-row">
+
+    <!-- Left Sidebar -->
+    <aside class="fixed top-0 left-0 w-64 h-full bg-white border-r border-outline-variant flex flex-col justify-between z-40 hidden md:flex transition-all duration-300">
+        <div>
+            <!-- Sidebar Logo Header -->
+            <div class="h-20 bg-[#000666] text-white flex items-center justify-between px-6 shadow-sm border-b border-primary/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-xl">corporate_fare</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold tracking-wide text-sm">Admin Portal</span>
+                        <span class="text-[10px] text-blue-200 uppercase tracking-widest font-semibold">Central Management</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Navigation Links -->
+            <nav class="p-4 space-y-1">
+                <!-- Dashboard -->
+                <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <!-- Students -->
+                <a href="students.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">group</span>
+                    <span>Students</span>
+                </a>
+                <!-- Rooms -->
+                <a href="rooms.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">bed</span>
+                    <span>Room Inventory</span>
+                </a>
+                <!-- Allocations (ACTIVE) -->
+                <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all bg-primary-fixed text-primary">
+                    <span class="material-symbols-outlined active-tab-indicator">assignment_turned_in</span>
+                    <span>Allocations</span>
+                </a>
+                <!-- Payments -->
+                <a href="payments.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">payments</span>
+                    <span>Payments</span>
+                </a>
+                <!-- Reports -->
+                <a href="reports.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">description</span>
+                    <span>Reports</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Sidebar Bottom Logout -->
+        <div class="p-4 border-t border-outline-variant/30">
+            <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 transition-all">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Top Header Bar -->
+    <header class="fixed top-0 left-0 md:left-64 right-0 h-16 bg-white border-b border-outline-variant flex justify-between items-center px-6 z-30 transition-all duration-300">
+        <div class="flex items-center gap-4 flex-grow max-w-lg">
+            <!-- Sidebar Collapse Toggle Button -->
+            <button id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 text-on-surface-variant flex items-center justify-center focus:outline-none" title="Collapse / Expand Sidebar">
+                <span id="sidebarToggleIcon" class="material-symbols-outlined text-xl">menu_open</span>
+            </button>
+            <span class="text-headline-sm font-bold text-primary">Academic HMS</span>
+            
+            <!-- Search Bar (Desktop only) -->
+            <div class="relative flex-grow hidden md:block">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+                <input id="topSearchInput" oninput="syncSearch(this.value)" type="text" placeholder="Search allocations..." class="w-full pl-10 pr-4 py-2 bg-surface-container border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <!-- Admin Notification Bell -->
+            <div class="relative">
+                <button id="adminNotifBtn" onclick="toggleAdminNotifDropdown(event)" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 relative text-on-surface-variant focus:outline-none" title="Notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span id="adminNotifRedDot" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white animate-pulse"></span>
+                </button>
+
+                <!-- Admin Notifications Dropdown Menu -->
+                <div id="adminNotifDropdown" class="hidden absolute right-0 top-12 w-80 sm:w-96 bg-white border border-outline-variant rounded-2xl shadow-2xl z-50 overflow-hidden text-sm">
+                    <div class="p-3 bg-slate-50 border-b border-outline-variant/30 flex justify-between items-center">
+                        <span class="font-bold text-primary text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-base">notifications</span>
+                            Admin Notifications
+                        </span>
+                        <span id="adminNotifBadgeCount" class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">0 unread</span>
+                    </div>
+
+                    <div id="adminNotifList" class="max-h-80 overflow-y-auto divide-y divide-outline-variant/20 p-1">
+                        <div class="p-4 text-center text-xs text-outline font-medium">No recent notifications</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block">
+                <span class="material-symbols-outlined text-on-surface-variant">help</span>
+            </button>
+            <button class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block">
+                <span class="material-symbols-outlined text-on-surface-variant">settings</span>
+            </button>
+
+            <!-- Divider Line -->
+            <div class="h-8 w-[1px] bg-outline-variant hidden sm:block"></div>
+
+            <!-- Profile Info dropdown trigger -->
+            <button id="profileBtn" class="flex items-center gap-2 p-1 hover:bg-outline-variant/20 rounded-lg transition-colors text-left relative">
+                <div class="hidden sm:flex flex-col items-end text-xs leading-none pr-1">
+                    <span id="profileName" class="font-bold text-on-surface text-sm">Admin User</span>
+                    <span id="profileRole" class="text-outline text-[10px] uppercase font-semibold mt-0.5">Hostel Supervisor</span>
+                </div>
+                <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden">
+                    <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA75ojBV-s9Bn-foNoXwbMSGA2pYQUCuv8fKcWTTCEp705Ew4QL9lGfbxh4KpeidH1nj3crTcxxkOZzPykqvixYbgnq6AEIi0eHe-tqEdb4rdYRPz_xeceLz0SU1nl7-T8GDH2O0S4WYuD1iAatFl3Bix_kdrgeUgAIq9vyguBIkSR1y-MC8gBqeIqLhahxe3NzVS2iVBufmh6MMSBAIfZrNwwtEU2ocdhc-nhy7_uL3gK9IcsmFmuAqGLMdVDU0izcb-qNAWJDeb4"/>
+                </div>
+                <span class="material-symbols-outlined text-outline text-sm">arrow_drop_down</span>
+                
+                <!-- Dropdown Menu inside button -->
+                <div id="profileMenu" class="hidden absolute right-0 top-12 w-48 bg-white border border-outline-variant rounded-xl shadow-xl py-2 z-50 text-sm text-on-surface">
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 hover:bg-background transition-colors">
+                        <span class="material-symbols-outlined text-sm">settings</span>
+                        <span>System Settings</span>
+                    </a>
+                    <hr class="border-outline-variant/30 my-1">
+                    <button onclick="logout()" class="w-full flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 transition-colors text-left">
+                        <span class="material-symbols-outlined text-sm">logout</span>
+                        <span>Log Out</span>
+                    </button>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow md:pl-64 pt-20 px-6 max-w-[1600px] mx-auto space-y-6 pb-24 md:pb-8 w-full">
+
+        <!-- Layout Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Pending Room Transfer Requests -->
+            <section id="pendingTransfersCard" class="bg-white p-6 rounded-2xl border border-amber-300 bg-amber-50/40 shadow-sm lg:col-span-3 space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-amber-900 text-base flex items-center gap-2">
+                        <span class="material-symbols-outlined text-amber-600">swap_horiz</span>
+                        <span>Pending Room Transfer Requests</span>
+                        <span id="pendingTransferBadge" class="bg-amber-600 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
+                    </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-amber-200 text-xs font-semibold uppercase tracking-wider text-amber-800">
+                                <th class="py-2.5 px-2">Student</th>
+                                <th class="py-2.5 px-2">Admission</th>
+                                <th class="py-2.5 px-2">Current Room</th>
+                                <th class="py-2.5 px-2">Target Room</th>
+                                <th class="py-2.5 px-2">Reason</th>
+                                <th class="py-2.5 px-2">Date Requested</th>
+                                <th class="py-2.5 px-2 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transferRequestsTableBody" class="divide-y divide-amber-100">
+                            <tr><td colspan="7" class="text-center py-4 text-amber-800">Loading pending requests...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Allocation Form Panel -->
+            <section class="bg-white p-6 rounded-2xl border border-outline-variant shadow-sm h-fit space-y-4">
+                <h3 class="font-bold text-primary text-lg">Allocate Room</h3>
+                
+                <!-- Notification Alerts -->
+                <div class="hidden p-4 rounded-xl border border-green-200 bg-green-50 text-green-700 text-sm" id="successAlert"></div>
+                <div class="hidden p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm" id="errorAlert"></div>
+                
+                <form id="allocationForm" class="space-y-4">
+                    <div>
+                        <label for="student_adm" class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Student Admission Number *</label>
+                        <input id="student_adm" type="text" required oninput="lookupStudentByAdm()" placeholder="e.g. ADM001"
+                               class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
+                        <input type="hidden" id="student_id" name="student_id">
+                        <span id="studentDetailsText" class="block text-[11px] text-green-700 font-semibold mt-1 hidden"></span>
+                    </div>
+
+                    <div>
+                        <label for="room_id" class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Select Room *</label>
+                        <select id="room_id" name="room_id" required onchange="renderRoomDetails(); updateCheckoutDate();"
+                                class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
+                            <option value="">Select student first</option>
+                        </select>
+                    </div>
+
+                    <!-- Room Details Card -->
+                    <div class="p-3 bg-slate-50 border border-outline-variant rounded-lg text-xs leading-relaxed text-outline-variant" id="roomDetails">
+                        Select a student and room above to view specifications.
+                    </div>
+
+                    <div>
+                        <label for="allocation_date" class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Allocation Start Date *</label>
+                        <input id="allocation_date" name="allocation_date" required type="date" onchange="updateCheckoutDate()"
+                               class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
+                    </div>
+
+                    <div>
+                        <label for="payment_amount" class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Initial Payment Amount (Ksh)</label>
+                        <input id="payment_amount" name="payment_amount" type="number" min="0" placeholder="e.g. 20000" oninput="updateCheckoutDate()"
+                               class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
+                    </div>
+
+                    <div>
+                        <label for="payment_method" class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Payment Option *</label>
+                        <select id="payment_method" name="payment_method" class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
+                            <option value="M-Pesa">M-Pesa</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Cheque">Cheque</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="payment_reference" class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Payment Reference / Transaction Ref</label>
+                        <input id="payment_reference" name="payment_reference" type="text" placeholder="e.g. QFH892K01 or Bank Slip #"
+                               class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
+                    </div>
+
+                    <!-- Expected Checkout Date Preview -->
+                    <div class="p-4 bg-primary/5 border border-primary/20 rounded-xl space-y-1">
+                        <span class="block text-[11px] font-bold uppercase tracking-wider text-primary">Expected Checkout Date</span>
+                        <input id="expected_checkout_date" name="expected_checkout_date" type="text" readonly
+                               class="w-full bg-transparent border-0 p-0 font-bold text-lg text-primary outline-none focus:ring-0 cursor-default">
+                        <span class="block text-[10px] text-outline">Calculated dynamically based on payment amount.</span>
+                    </div>
+
+                    <div class="hidden">
+                        <input type="hidden" id="status" name="status" value="active">
+                    </div>
+
+                    <div class="pt-2 flex gap-2">
+                        <button type="button" onclick="resetForm()" class="flex-1 py-2 border border-outline text-outline hover:bg-slate-50 font-semibold rounded-lg text-sm transition-colors text-center">Clear</button>
+                        <button type="submit" class="flex-1 py-2.5 bg-primary hover:bg-primary-container text-white font-semibold rounded-lg text-sm shadow-md transition-colors text-center">Allocate Room</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Active Allocations Directory -->
+            <section class="bg-white p-6 rounded-2xl border border-outline-variant shadow-sm lg:col-span-2 space-y-4">
+                <h3 class="font-bold text-primary text-lg">Active Allocations</h3>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-outline-variant/60 text-xs font-semibold uppercase tracking-wider text-outline">
+                                <th class="py-3 px-2">Student</th>
+                                <th class="py-3 px-2">Admission</th>
+                                <th class="py-3 px-2">Room</th>
+                                <th class="py-3 px-2">Booking Code</th>
+                                <th class="py-3 px-2">Allocated On</th>
+                                <th class="py-3 px-2">Status</th>
+                                <th class="py-3 px-2 text-right">Vacate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allocationTableBody" class="divide-y divide-outline-variant/30">
+                            <tr><td colspan="7" class="text-center py-6 text-outline">Loading allocations...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    </main>
+
+    <script>
+        function toggleSidebarCollapse() {
+            const sidebar = document.querySelector('aside');
+            const header = document.querySelector('header');
+            const main = document.querySelector('main');
+            const icon = document.getElementById('sidebarToggleIcon');
+            const isHidden = sidebar.classList.contains('hidden');
+
+            if (isHidden) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
+                if (header) header.style.left = '';
+                if (main) main.style.marginLeft = '';
+                if (icon) icon.textContent = 'menu_open';
+                localStorage.setItem('adminSidebarCollapsed', 'false');
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
+                if (header) header.style.left = '0px';
+                if (main) main.style.marginLeft = '0px';
+                if (icon) icon.textContent = 'menu';
+                localStorage.setItem('adminSidebarCollapsed', 'true');
+            }
+        }
+
+        (function applySavedSidebarState() {
+            if (localStorage.getItem('adminSidebarCollapsed') === 'true') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    const sidebar = document.querySelector('aside');
+                    const header = document.querySelector('header');
+                    const main = document.querySelector('main');
+                    const icon = document.getElementById('sidebarToggleIcon');
+                    if (sidebar) {
+                        sidebar.classList.add('hidden');
+                        sidebar.classList.remove('flex');
+                    }
+                    if (header) header.style.left = '0px';
+                    if (main) main.style.marginLeft = '0px';
+                    if (icon) icon.textContent = 'menu';
+                });
+            }
+        })();
+
+        const form = document.getElementById('allocationForm');
+        const studentAdmInput = document.getElementById('student_adm');
+        const studentIdHidden = document.getElementById('student_id');
+        const roomSelect = document.getElementById('room_id');
+        const roomDetails = document.getElementById('roomDetails');
+        const tableBody = document.getElementById('allocationTableBody');
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+
+        let students = [];
+        let rooms = [];
+        let allAllocations = [];
+        let activeFilter = 'active';
+
+        function filterAllocations() {
+            const query = (document.getElementById('topSearchInput')?.value || '').toLowerCase();
+            let filtered = allAllocations;
+
+            if (activeFilter === 'active') {
+                filtered = filtered.filter(a => a.status !== 'inactive');
+            } else if (activeFilter === 'inactive') {
+                filtered = filtered.filter(a => a.status === 'inactive');
+            }
+
+            if (query) {
+                filtered = filtered.filter(a =>
+                    (a.full_name || '').toLowerCase().includes(query) ||
+                    (a.admission_number || '').toLowerCase().includes(query) ||
+                    (a.room_number || '').toLowerCase().includes(query) ||
+                    (a.booking_code || '').toLowerCase().includes(query)
+                );
+            }
+
+            renderAllocations(filtered);
+        }
+
+        function syncSearch(val) {
+            filterAllocations();
+        }
+
+        function setFilter(filterType, element) {
+            activeFilter = filterType;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-outline-variant hover:text-on-surface transition-colors';
+            });
+            if (element) {
+                element.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white transition-colors shadow-sm';
+            }
+            filterAllocations();
+        }
+
+        // Verify session status
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me');
+                const data = await response.json();
+                
+                if (!data.success || data.user.role !== 'admin') {
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                document.getElementById('profileName').textContent = data.user.fullName;
+                document.getElementById('profileRole').textContent = data.user.role.charAt(0).toUpperCase() + data.user.role.slice(1) + ' Admin';
+
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('allocation_date').value = today;
+                updateCheckoutDate();
+                
+                await loadOptions();
+                await loadAllocations();
+                await loadTransferRequests();
+                await loadAdminNotifications();
+            } catch (err) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function toggleAdminNotifDropdown(e) {
+            if (e) e.stopPropagation();
+            const dd = document.getElementById('adminNotifDropdown');
+            if (dd) dd.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dd = document.getElementById('adminNotifDropdown');
+            const btn = document.getElementById('adminNotifBtn');
+            if (dd && !dd.classList.contains('hidden') && !dd.contains(e.target) && (btn && !btn.contains(e.target))) {
+                dd.classList.add('hidden');
+            }
+        });
+
+        async function loadAdminNotifications() {
+            const redDot = document.getElementById('adminNotifRedDot');
+            const badgeCount = document.getElementById('adminNotifBadgeCount');
+            const notifList = document.getElementById('adminNotifList');
+            if (!notifList) return;
+
+            let items = [];
+
+            try {
+                const trRes = await fetch('/api/allocations/transfer-requests');
+                const trData = await trRes.json();
+                if (trData.success && trData.data) {
+                    const pending = trData.data.filter(r => r.status === 'pending');
+                    pending.forEach(req => {
+                        items.push({
+                            id: 'tr-' + req.request_id,
+                            title: 'Pending Room Transfer Request',
+                            body: `${req.student_name} (${req.admission_number}) requested transfer to Room ${req.target_room_number} (${req.target_block}).`,
+                            icon: 'swap_horiz',
+                            iconColor: 'text-amber-600 bg-amber-100',
+                            unread: true,
+                            link: 'allocations.html',
+                            date: req.created_at
+                        });
+                    });
+                }
+
+                const allocRes = await fetch('/api/allocations');
+                const allocData = await allocRes.json();
+                if (allocData.success && allocData.data) {
+                    const recent = allocData.data.slice(0, 3);
+                    recent.forEach(alloc => {
+                        items.push({
+                            id: 'alloc-' + alloc.allocation_id,
+                            title: 'Active Room Allocation',
+                            body: `${alloc.full_name || 'Student'} allocated to Room ${alloc.room_number || 'N/A'} (${alloc.block_name || ''}).`,
+                            icon: 'meeting_room',
+                            iconColor: 'text-blue-600 bg-blue-100',
+                            unread: false,
+                            link: 'allocations.html',
+                            date: alloc.allocation_date
+                        });
+                    });
+                }
+
+                const unreadCount = items.filter(i => i.unread).length;
+
+                if (redDot) {
+                    if (unreadCount > 0) redDot.classList.remove('hidden');
+                    else redDot.classList.add('hidden');
+                }
+
+                if (badgeCount) {
+                    badgeCount.textContent = `${unreadCount} unread`;
+                }
+
+                if (items.length === 0) {
+                    notifList.innerHTML = '<div class="p-6 text-center text-xs text-outline font-medium">No recent notifications</div>';
+                    return;
+                }
+
+                notifList.innerHTML = items.map(item => `
+                    <a href="${item.link}" class="p-3 hover:bg-slate-50 transition-colors flex items-start gap-3 block ${item.unread ? 'bg-amber-50/40' : ''}">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${item.iconColor}">
+                            <span class="material-symbols-outlined text-base">${item.icon}</span>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="font-bold text-xs text-on-surface truncate">${item.title}</span>
+                                ${item.unread ? '<span class="w-2 h-2 rounded-full bg-red-600 shrink-0"></span>' : ''}
+                            </div>
+                            <p class="text-xs text-outline mt-0.5 leading-relaxed">${item.body}</p>
+                            <span class="text-[10px] text-outline-variant block mt-1">${formatDate(item.date)}</span>
+                        </div>
+                    </a>
+                `).join('');
+
+            } catch (err) {
+                console.error('Error loading admin notifications:', err);
+            }
+        }
+
+        async function loadTransferRequests() {
+            const card = document.getElementById('pendingTransfersCard');
+            const tbody = document.getElementById('transferRequestsTableBody');
+            const badge = document.getElementById('pendingTransferBadge');
+            
+            if (!card || !tbody) return;
+
+            try {
+                const res = await fetch('/api/allocations/transfer-requests');
+                const data = await res.json();
+                if (data.success && data.data) {
+                    const pending = data.data.filter(r => r.status === 'pending');
+                    if (pending.length === 0) {
+                        card.classList.add('hidden');
+                        return;
+                    }
+
+                    badge.textContent = pending.length;
+                    card.classList.remove('hidden');
+
+                    tbody.innerHTML = pending.map(req => {
+                        return `
+                            <tr class="hover:bg-amber-100/40 transition-colors">
+                                <td class="py-3 px-2 font-bold text-on-surface">${req.student_name}</td>
+                                <td class="py-3 px-2 text-xs font-mono font-semibold text-outline-variant">${req.admission_number}</td>
+                                <td class="py-3 px-2 text-xs font-semibold">Room ${req.current_room_number} (${req.current_block})</td>
+                                <td class="py-3 px-2 text-xs font-bold text-amber-900">Room ${req.target_room_number} (${req.target_block})</td>
+                                <td class="py-3 px-2 text-xs text-outline max-w-[150px] truncate">${req.reason || 'Room transfer'}</td>
+                                <td class="py-3 px-2 text-xs text-outline">${formatDate(req.created_at)}</td>
+                                <td class="py-3 px-2 text-right">
+                                    <div class="flex justify-end gap-1.5">
+                                        <button onclick="approveTransferRequest(${req.request_id})" class="px-2.5 py-1 bg-green-700 hover:bg-green-800 text-white text-xs font-bold rounded-lg transition-colors shadow">
+                                            Approve
+                                        </button>
+                                        <button onclick="rejectTransferRequest(${req.request_id})" class="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors shadow">
+                                            Reject
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error('Failed to load transfer requests:', err);
+            }
+        }
+
+        async function approveTransferRequest(reqId) {
+            if (!confirm('Are you sure you want to approve this room transfer/swap request?')) return;
+            try {
+                const res = await fetch(`/api/allocations/transfer-requests/${reqId}/approve`, { method: 'POST' });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message);
+                showMessage('success', '✓ ' + data.message);
+                await Promise.all([loadTransferRequests(), loadAllocations(), loadOptions()]);
+            } catch (err) {
+                showMessage('error', err.message);
+            }
+        }
+
+        async function rejectTransferRequest(reqId) {
+            if (!confirm('Are you sure you want to reject this request?')) return;
+            try {
+                const res = await fetch(`/api/allocations/transfer-requests/${reqId}/reject`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ remarks: 'Rejected by administration' })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message);
+                showMessage('success', 'Transfer request rejected.');
+                await Promise.all([loadTransferRequests(), loadAllocations()]);
+            } catch (err) {
+                showMessage('error', err.message);
+            }
+        }
+
+        function updateCheckoutDate() {
+            const allocVal = document.getElementById('allocation_date').value;
+            if (!allocVal) return;
+
+            const room = rooms.find(r => String(r.room_id) === roomSelect.value);
+            const blockRates = { Batian: 50000, Nelion: 30000 };
+            const monthlyRate = room ? (blockRates[room.block_name] || 50000) : 50000;
+            const initialPayment = Number(document.getElementById('payment_amount').value || 0);
+
+            const start = new Date(allocVal);
+            if (initialPayment > 0) {
+                const dailyRate = monthlyRate / 30;
+                const daysCovered = Math.round(initialPayment / dailyRate);
+                start.setDate(start.getDate() + daysCovered);
+            } else {
+                // 5-day grace period for unpaid lease reservation
+                start.setDate(start.getDate() + 5);
+            }
+
+            document.getElementById('expected_checkout_date').value = formatDate(start);
+        }
+
+        function showMessage(type, message) {
+            if (type === 'success') {
+                successAlert.textContent = message;
+                successAlert.classList.remove('hidden');
+                errorAlert.classList.add('hidden');
+                setTimeout(() => successAlert.classList.add('hidden'), 4000);
+            } else {
+                errorAlert.textContent = message;
+                errorAlert.classList.remove('hidden');
+                successAlert.classList.add('hidden');
+                setTimeout(() => errorAlert.classList.add('hidden'), 4000);
+            }
+        }
+
+        function lookupStudentByAdm() {
+            const adm = studentAdmInput.value.trim().toLowerCase();
+            const selectedStudent = students.find(s => (s.admission_number || '').toLowerCase() === adm);
+            const detailsSpan = document.getElementById('studentDetailsText');
+
+            if (selectedStudent) {
+                studentIdHidden.value = selectedStudent.student_id;
+                detailsSpan.textContent = `✓ Student Found: ${selectedStudent.full_name} (${selectedStudent.gender.toUpperCase()})`;
+                detailsSpan.classList.remove('hidden', 'text-red-600');
+                detailsSpan.classList.add('text-green-700');
+            } else {
+                studentIdHidden.value = '';
+                detailsSpan.textContent = adm ? '✗ Student not found in directory' : '';
+                if (adm) {
+                    detailsSpan.classList.remove('hidden', 'text-green-700');
+                    detailsSpan.classList.add('text-red-600');
+                } else {
+                    detailsSpan.classList.add('hidden');
+                }
+            }
+
+            filterRoomsByStudentGender();
+        }
+
+        function resetForm() {
+            form.reset();
+            studentIdHidden.value = '';
+            const detailsSpan = document.getElementById('studentDetailsText');
+            if (detailsSpan) detailsSpan.classList.add('hidden');
+            document.getElementById('allocation_date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('status').value = 'active';
+            updateCheckoutDate();
+            filterRoomsByStudentGender();
+        }
+
+        function filterRoomsByStudentGender() {
+            const studentId = studentIdHidden.value;
+            const selectedStudent = students.find(s => String(s.student_id) === String(studentId));
+
+            if (!selectedStudent) {
+                roomSelect.innerHTML = '<option value="">Enter a valid student admission number first</option>';
+                roomDetails.innerHTML = 'Enter a valid student admission number above to view available rooms for their gender.';
+                document.getElementById('payment_amount').value = '';
+                return;
+            }
+
+            const gender = (selectedStudent.gender || '').toLowerCase();
+            const filteredRooms = rooms.filter(r => (r.gender_restriction || '').toLowerCase() === gender);
+
+            if (!filteredRooms.length) {
+                const blockName = gender === 'male' ? 'Batian (Male)' : 'Nelion (Female)';
+                roomSelect.innerHTML = `<option value="">No available ${blockName} rooms</option>`;
+                roomDetails.innerHTML = `No available rooms found for ${gender.toUpperCase()} students.`;
+                document.getElementById('payment_amount').value = '';
+            } else {
+                const roomsHtml = filteredRooms.map(r => {
+                    const available = Number(r.capacity) - Number(r.current_occupancy);
+                    const blockLabel = r.block_name ? ` | Block ${r.block_name}` : '';
+                    return `<option value="${r.room_id}">${r.room_number}${blockLabel} | ${r.room_type} | ${r.gender_restriction.toUpperCase()} | ${available} beds available</option>`;
+                }).join('');
+                roomSelect.innerHTML = '<option value="">Select room</option>' + roomsHtml;
+                renderRoomDetails();
+            }
+        }
+
+        async function loadOptions() {
+            try {
+                const [studentsRes, roomsRes] = await Promise.all([
+                    fetch('/api/students'),
+                    fetch('/api/rooms')
+                ]);
+                const studentsData = await studentsRes.json();
+                const roomsData = await roomsRes.json();
+                
+                if (!studentsData.success || !roomsData.success) {
+                    throw new Error(studentsData.message || roomsData.message || 'Could not load dropdown values');
+                }
+
+                students = studentsData.data || [];
+                rooms = (roomsData.data || []).filter(r => r.status === 'available' && Number(r.current_occupancy) < Number(r.capacity));
+
+                filterRoomsByStudentGender();
+            } catch (error) {
+                console.error(error);
+                showMessage('error', 'Failed to load options: ' + error.message);
+            }
+        }
+
+        function renderRoomDetails() {
+            const room = rooms.find(r => String(r.room_id) === roomSelect.value);
+            if (!room) {
+                roomDetails.innerHTML = 'Select a room to view its details.';
+                document.getElementById('payment_amount').value = '';
+                return;
+            }
+
+            const blockRates = { Batian: 50000, Nelion: 30000 };
+            const rate = blockRates[room.block_name] || 0;
+            document.getElementById('payment_amount').value = rate;
+
+            const amenities = room.amenities ? room.amenities : 'No amenities listed';
+            const occupiedCount = Number(room.current_occupancy || 0);
+            const totalCapacity = Number(room.capacity || 0);
+            const availableBeds = totalCapacity - occupiedCount;
+            
+            roomDetails.innerHTML = `
+                <div class="space-y-1">
+                    <div class="font-bold text-primary text-sm">${room.room_number}</div>
+                    <div>Block: <span class="font-semibold text-on-surface">${room.block_name || 'Not set'} (${room.gender_restriction.toUpperCase()})</span></div>
+                    <div>Type: <span class="font-semibold text-on-surface">${room.room_type || 'N/A'}</span></div>
+                    <div>Beds: <span class="font-semibold text-on-surface">${totalCapacity} total | Occupied: ${occupiedCount} | Available: ${availableBeds}</span></div>
+                    <div>Amenities: <span class="text-on-surface-variant font-medium">${amenities}</span></div>
+                </div>
+            `;
+        }
+
+        async function loadAllocations() {
+            try {
+                const response = await fetch('/api/allocations');
+                const data = await response.json();
+                if (!data.success) throw new Error(data.message || 'Unable to load allocations');
+                allAllocations = data.data || [];
+                filterAllocations();
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-red-500 font-semibold">${error.message}</td></tr>`;
+            }
+        }
+
+        function formatDate(dateInput) {
+            if (!dateInput) return '-';
+            const d = new Date(dateInput);
+            if (isNaN(d.getTime())) return String(dateInput);
+            
+            const day = d.getDate();
+            let suffix = 'th';
+            if (day < 11 || day > 13) {
+                switch (day % 10) {
+                    case 1: suffix = 'st'; break;
+                    case 2: suffix = 'nd'; break;
+                    case 3: suffix = 'rd'; break;
+                }
+            }
+            const month = d.toLocaleString('en-GB', { month: 'short' });
+            const year = d.getFullYear();
+            
+            return `${day} ${month} ${year}`;
+        }
+
+        function renderAllocations(allocations) {
+            if (!allocations.length) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-outline">No allocations found.</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = allocations.map(item => {
+                const capacity = item.capacity || 0;
+                const occupancy = item.current_occupancy || 0;
+                const capText = `${occupancy}/${capacity}`;
+                const studentName = item.full_name || 'Unknown Student';
+                
+                let badgeClass = '';
+                if (item.status === 'inactive') {
+                    badgeClass = 'bg-slate-100 text-slate-700';
+                } else if (item.status === 'pending_payment') {
+                    badgeClass = 'bg-yellow-50 text-yellow-700 border border-yellow-200';
+                } else {
+                    badgeClass = 'bg-green-50 text-green-700 border border-green-200';
+                }
+
+                return `
+                <tr class="hover:bg-outline-variant/10 transition-colors">
+                    <td class="py-3 px-2 font-bold text-on-surface">${studentName}</td>
+                    <td class="py-3 px-2 text-outline">${item.admission_number || '-'}</td>
+                    <td class="py-3 px-2 font-semibold text-on-surface-variant">${item.room_number || '-'}</td>
+                    <td class="py-3 px-2">
+                        <span class="px-2 py-0.5 bg-primary/10 text-primary font-mono text-xs font-semibold rounded">${item.booking_code || '-'}</span>
+                    </td>
+                    <td class="py-3 px-2 text-xs text-outline">${formatDate(item.allocation_date)}</td>
+                    <td class="py-3 px-2">
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider ${badgeClass}">${item.status || 'active'}</span>
+                        <span class="text-xs text-outline font-medium">(${capText})</span>
+                    </td>
+                    <td class="py-3 px-2 text-right">
+                        <button class="p-1 text-red-600 hover:bg-red-50 rounded transition-colors active:scale-95 flex items-center justify-center inline-block" onclick="deleteAllocation(${item.allocation_id})" title="Vacate / Delete">
+                            <span class="material-symbols-outlined text-base">logout</span>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!studentSelect.value) {
+                showMessage('error', 'Please select a student.');
+                return;
+            }
+            
+            // Map formatted date from display block to payload
+            const rawDateVal = document.getElementById('allocation_date').value;
+            const payload = {
+                student_id: studentSelect.value,
+                room_id: roomSelect.value,
+                allocation_date: rawDateVal,
+                payment_amount: Number(document.getElementById('payment_amount').value || 0),
+                status: 'active'
+            };
+            
+            try {
+                const response = await fetch('/api/allocations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (!data.success) throw new Error(data.message || 'Allocation failed');
+                showMessage('success', `Room allocated successfully! Booking Code: ${data.booking_code}`);
+                resetForm();
+                await loadAllocations();
+                await loadOptions();
+            } catch (error) {
+                showMessage('error', error.message);
+            }
+        });
+
+        async function deleteAllocation(allocationId) {
+            if (!confirm('Are you sure you want to remove this allocation?')) return;
+            try {
+                const response = await fetch(`/api/allocations?allocation_id=${allocationId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (!data.success) throw new Error(data.message || 'Delete failed');
+                showMessage('success', 'Allocation removed successfully.');
+                await loadAllocations();
+                await loadOptions();
+            } catch (error) {
+                showMessage('error', error.message);
+            }
+        }
+
+        // Profile dropdown toggle
+        document.getElementById('profileBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.add('hidden');
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.querySelector('aside');
+        if (mobileMenuBtn && sidebar) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('flex');
+                sidebar.classList.add('shadow-2xl');
+            });
+            // Close sidebar on click outside
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 768 && !sidebar.contains(e.target) && e.target !== mobileMenuBtn) {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('flex');
+                }
+            });
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/logout', {
+                    method: 'POST'
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+            }
+        }
+
+        // Initialize check
+        checkAuth();
+
+        // Micro-interaction for hover states and button feedback
+        document.querySelectorAll('button, .cursor-pointer').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+                el.style.transition = 'transform 0.05s ease';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
