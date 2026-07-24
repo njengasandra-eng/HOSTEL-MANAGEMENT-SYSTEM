@@ -666,8 +666,8 @@
                     return;
                 }
                 
-                document.getElementById('profileName').textContent = data.user.fullName;
-                document.getElementById('profileRole').textContent = data.user.role.charAt(0).toUpperCase() + data.user.role.slice(1) + ' Admin';
+                document.getElementById('profileName').textContent = 'Administrator';
+                document.getElementById('profileRole').textContent = 'ADMIN ADMIN';
                 document.getElementById('date_of_admission').value = new Date().toISOString().split('T')[0];
                 
                 await loadStudents();
