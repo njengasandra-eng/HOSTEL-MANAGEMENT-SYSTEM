@@ -10,12 +10,32 @@ const counterSchema = new mongoose.Schema({
 const Counter = mongoose.model('Counter', counterSchema);
 
 async function nextId(name) {
-  const doc = await Counter.findByIdAndUpdate(
-    name,
-    { $inc: { seq: 1 } },
-    { new: true, upsert: true }
-  );
-  return doc.seq;
+  if (mongoose.connection && mongoose.connection.readyState === 1) {
+    try {
+      const doc = await Counter.findByIdAndUpdate(
+        name,
+        { $inc: { seq: 1 } },
+        { returnDocument: 'after', upsert: true }
+      );
+      return doc.seq;
+    } catch (err) {
+      console.error('Counter error, using memory fallback:', err.message);
+    }
+  }
+
+  const map = {
+    user_id: cache.users,
+    student_id: cache.students,
+    room_id: cache.rooms,
+    allocation_id: cache.allocations,
+    payment_id: cache.payments,
+    log_id: cache.audit_logs,
+    request_id: cache.transfer_requests,
+    notice_id: cache.notices
+  };
+  const list = map[name] || [];
+  const max = list.reduce((m, item) => Math.max(m, item[name] || 0), 0);
+  return max + 1;
 }
 
 // Users
@@ -419,22 +439,19 @@ const db = {
 // ─── Initialize & Seed ────────────────────────────────────────────────────────
 
 async function initializeDatabase() {
-  const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://nyumuharon:haron123@cluster0.mongodb.net/hostel_db?retryWrites=true&w=majority';
+  const mongoUri = process.env.MONGODB_URI;
 
-  console.log('Connecting to MongoDB Atlas...');
-  await mongoose.connect(mongoUri);
-  console.log(' Connected to MongoDB Atlas');
-
-  // Load all data into cache
-  await loadCache();
-  console.log(' Data loaded into memory cache');
-
-  // Automatic cleanup of legacy Lenana records from MongoDB Atlas
-  const deletedRooms = await Room.deleteMany({ $or: [{ block_name: /lenana/i }, { room_number: /^LEN-/i }] });
-  const deletedPayments = await Payment.deleteMany({ hostel_block: /lenana/i });
-  if (deletedRooms.deletedCount > 0 || deletedPayments.deletedCount > 0) {
-    console.log(` Cleaned legacy Lenana records from MongoDB Atlas (${deletedRooms.deletedCount} rooms, ${deletedPayments.deletedCount} payments)`);
-    await loadCache();
+  if (mongoUri) {
+    try {
+      console.log('Connecting to MongoDB Atlas...');
+      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
+      console.log(' Connected to MongoDB Atlas');
+      await loadCache();
+    } catch (err) {
+      console.error('MongoDB Atlas connection failed, operating with in-memory data cache:', err.message);
+    }
+  } else {
+    console.log('No MONGODB_URI provided, initializing in-memory database cache...');
   }
 
   // Seed admin user
@@ -494,10 +511,19 @@ async function initializeDatabase() {
   }
 
   if (newRoomsToInsert.length > 0) {
-    await Room.insertMany(newRoomsToInsert);
-    await Counter.findByIdAndUpdate('room_id', { seq: maxRoomId }, { upsert: true });
-    console.log(` Batch seeded ${newRoomsToInsert.length} new rooms instantly`);
-    await loadCache();
+    if (mongoose.connection && mongoose.connection.readyState === 1) {
+      try {
+        await Room.insertMany(newRoomsToInsert);
+        await Counter.findByIdAndUpdate('room_id', { seq: maxRoomId }, { upsert: true });
+        console.log(` Batch seeded ${newRoomsToInsert.length} new rooms to MongoDB Atlas`);
+        await loadCache();
+      } catch (err) {
+        cache.rooms.push(...newRoomsToInsert);
+      }
+    } else {
+      cache.rooms.push(...newRoomsToInsert);
+      console.log(` Seeded ${newRoomsToInsert.length} rooms to memory cache`);
+    }
   }
 
   // Seed default notice using actual room numbers
@@ -510,6 +536,38 @@ async function initializeDatabase() {
       posted_by: 'Admin'
     });
     console.log(' Seeded default hostel notice');
+  }
+
+  // Seed sample allocations & payments if empty
+  if (cache.allocations.length === 0 && cache.students.length > 0) {
+    const student1 = cache.students[0];
+    const room1 = cache.rooms.find(r => r.room_number === 'BAT-001');
+    if (student1 && room1) {
+      await db.allocations.insert({
+        student_id: student1.student_id,
+        room_id: room1.room_id,
+        allocation_date: new Date().toISOString().split('T')[0],
+        status: 'active',
+        booking_code: 'BK-SAMPLE1',
+        full_name: student1.full_name,
+        room_number: room1.room_number
+      });
+      db.rooms.update(room1.room_id, { current_occupancy: 1, status: 'reserved' });
+    }
+  }
+
+  if (cache.payments.length === 0 && cache.students.length > 0) {
+    const student1 = cache.students[0];
+    if (student1) {
+      await db.payments.insert({
+        student_id: student1.student_id,
+        amount: 20000,
+        payment_method: 'mpesa',
+        transaction_id: 'MPESA998822',
+        status: 'completed',
+        payment_date: new Date().toISOString().split('T')[0]
+      });
+    }
   }
 
   console.log('MongoDB database initialization complete.');
