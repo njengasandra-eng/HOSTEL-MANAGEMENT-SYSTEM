@@ -119,58 +119,82 @@
 <body class="bg-surface text-on-surface min-h-screen">
 
     <!-- Left Sidebar -->
-    <aside class="fixed top-0 left-0 h-full flex flex-col bg-surface-container-low border-r border-outline-variant w-64 z-40 hidden md:flex">
-        <div class="px-6 py-6 border-b border-outline-variant">
-            <div class="flex items-center gap-3 mb-1">
-                <div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                    <span class="material-symbols-outlined text-white text-lg filled">school</span>
+    <aside class="fixed top-0 left-0 w-64 h-full bg-white border-r border-outline-variant flex flex-col justify-between z-40 hidden md:flex transition-all duration-300">
+        <div>
+            <!-- Sidebar Logo Header -->
+            <div class="h-20 bg-[#000666] text-white flex items-center justify-between px-6 shadow-sm border-b border-primary/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-xl">corporate_fare</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold tracking-wide text-sm">Admin Portal</span>
+                        <span class="text-[10px] text-blue-200 uppercase tracking-widest font-semibold">Central Management</span>
+                    </div>
                 </div>
-                <span class="font-headline-sm text-headline-sm font-bold text-primary">Admin Portal</span>
             </div>
-            <p class="font-label-caps text-label-caps text-outline ml-11">Central Management</p>
+
+            <!-- Sidebar Navigation Links -->
+            <nav class="p-4 space-y-1">
+                <!-- Dashboard -->
+                <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <!-- Students -->
+                <a href="students.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">group</span>
+                    <span>Students</span>
+                </a>
+                <!-- Rooms (ACTIVE) -->
+                <a href="rooms.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all bg-primary-fixed text-primary">
+                    <span class="material-symbols-outlined active-tab-indicator">bed</span>
+                    <span>Room Inventory</span>
+                </a>
+                <!-- Allocations -->
+                <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">assignment_turned_in</span>
+                    <span>Allocations</span>
+                </a>
+                <!-- Payments -->
+                <a href="payments.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">payments</span>
+                    <span>Payments</span>
+                </a>
+                <!-- Reports -->
+                <a href="reports.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all text-on-surface-variant hover:bg-outline-variant/20 hover:text-primary">
+                    <span class="material-symbols-outlined">description</span>
+                    <span>Reports</span>
+                </a>
+            </nav>
         </div>
-        <nav class="flex-grow py-4">
-            <a href="dashboard.html" class="flex items-center gap-4 px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all font-label-caps text-label-caps">
-                <span class="material-symbols-outlined">dashboard</span> Dashboard
-            </a>
-            <a href="students.html" class="flex items-center gap-4 px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all font-label-caps text-label-caps">
-                <span class="material-symbols-outlined">group</span> Students
-            </a>
-            <a href="rooms.html" class="flex items-center gap-4 px-6 py-3 text-primary bg-secondary-fixed font-bold transition-all font-label-caps text-label-caps">
-                <span class="material-symbols-outlined filled">bed</span> Room Inventory
-            </a>
-            <a href="allocations.html" class="flex items-center gap-4 px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all font-label-caps text-label-caps">
-                <span class="material-symbols-outlined">assignment_turned_in</span> Allocations
-            </a>
-            <a href="payments.html" class="flex items-center gap-4 px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all font-label-caps text-label-caps">
-                <span class="material-symbols-outlined">payments</span> Payments
-            </a>
-            <a href="reports.html" class="flex items-center gap-4 px-6 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all font-label-caps text-label-caps">
-                <span class="material-symbols-outlined">analytics</span> Reports
-            </a>
-        </nav>
-        <div class="p-4 border-t border-outline-variant">
-            <button onclick="logout()" class="flex items-center gap-4 px-6 py-3 w-full text-on-surface-variant hover:bg-surface-container-high transition-all font-label-caps text-label-caps">
-                <span class="material-symbols-outlined">logout</span> Logout
+
+        <!-- Sidebar Bottom Logout -->
+        <div class="p-4 border-t border-outline-variant/30">
+            <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 transition-all">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Logout</span>
             </button>
         </div>
     </aside>
 
-    <!-- Top Header -->
-    <header class="fixed top-0 left-0 md:left-64 right-0 h-16 z-30 bg-surface border-b border-outline-variant flex justify-between items-center px-6 transition-all duration-300">
+    <!-- Top Header Bar -->
+    <header class="fixed top-0 left-0 md:left-64 right-0 h-16 bg-white border-b border-outline-variant flex justify-between items-center px-6 z-30 transition-all duration-300">
         <div class="flex items-center gap-4 flex-grow max-w-lg">
             <!-- Sidebar Collapse Toggle Button -->
             <button id="sidebarToggleBtn" onclick="toggleSidebarCollapse()" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 text-on-surface-variant flex items-center justify-center focus:outline-none" title="Collapse / Expand Sidebar">
                 <span id="sidebarToggleIcon" class="material-symbols-outlined text-xl">menu_open</span>
             </button>
-            <span class="font-headline-sm text-headline-sm font-bold text-primary">Academic HMS</span>
-            <!-- Search -->
-            <div class="relative flex-grow hidden md:flex items-center bg-surface-container-low border border-outline-variant px-3 py-1.5 rounded-lg w-64">
-                <span class="material-symbols-outlined text-outline text-sm">search</span>
-                <input id="topSearchInput" oninput="syncSearch(this.value)" type="text" placeholder="Search room number..."
-                       class="bg-transparent border-none focus:ring-0 text-body-sm w-full ml-2 outline-none"/>
+            <span class="text-headline-sm font-bold text-primary">Academic HMS</span>
+            
+            <!-- Search Bar (Desktop only) -->
+            <div class="relative flex-grow hidden md:block">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+                <input id="topSearchInput" oninput="syncSearch(this.value)" type="text" placeholder="Search room number..." class="w-full pl-10 pr-4 py-2 bg-surface-container border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent outline-none transition-all text-sm">
             </div>
         </div>
+
+        <div class="flex items-center gap-4">
             <!-- Admin Notification Bell -->
             <div class="relative">
                 <button id="adminNotifBtn" onclick="toggleAdminNotifDropdown(event)" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 relative text-on-surface-variant focus:outline-none" title="Notifications">
@@ -194,29 +218,51 @@
                 </div>
             </div>
 
-            <button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors hidden sm:block">help</button>
-            <button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors hidden sm:block">settings</button>
-            <div class="ml-1 flex items-center gap-2 cursor-pointer" id="profileBtn">
+            <button class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block">
+                <span class="material-symbols-outlined text-on-surface-variant">help</span>
+            </button>
+            <button onclick="openSettingsModal()" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block" title="Settings">
+                <span class="material-symbols-outlined text-on-surface-variant">settings</span>
+            </button>
+
+            <!-- Divider Line -->
+            <div class="h-8 w-[1px] bg-outline-variant hidden sm:block"></div>
+
+            <!-- Profile Info dropdown trigger -->
+            <button id="profileBtn" class="flex items-center gap-2 p-1 hover:bg-outline-variant/20 rounded-lg transition-colors text-left relative">
                 <div class="hidden sm:flex flex-col items-end text-xs leading-none pr-1">
-                    <span id="profileName" class="font-bold text-on-surface text-sm">Admin</span>
-                    <span id="profileRole" class="text-outline text-[10px] uppercase font-semibold mt-0.5">Hostel Supervisor</span>
+                    <span id="profileName" class="font-bold text-on-surface text-sm">Administrator</span>
+                    <span id="profileRole" class="text-outline text-[10px] uppercase font-semibold mt-0.5">ADMIN ADMIN</span>
                 </div>
-                <div class="w-8 h-8 rounded-full border border-outline-variant overflow-hidden bg-primary-fixed flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary text-sm">person</span>
+                <!-- Admin profile photo - click to change -->
+                <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden cursor-pointer relative group" onclick="document.getElementById('adminPhotoInputRooms').click()" title="Click to change photo">
+                    <img id="adminProfilePhotoRooms" class="w-full h-full object-cover" src="" style="display:none">
+                    <div id="adminInitialsRooms" class="w-full h-full flex items-center justify-center bg-primary-container text-primary font-bold text-sm">A</div>
+                    <div class="hidden group-hover:flex absolute inset-0 bg-black/40 items-center justify-center rounded-full">
+                        <span class="material-symbols-outlined text-white text-sm">photo_camera</span>
+                    </div>
+                    <input type="file" id="adminPhotoInputRooms" accept="image/*" class="hidden" onchange="uploadAdminPhoto(event,'adminProfilePhotoRooms','adminInitialsRooms')">
                 </div>
-                <!-- Profile Dropdown -->
-                <div id="profileMenu" class="hidden absolute right-4 top-14 w-44 bg-white border border-outline-variant rounded-xl shadow-xl py-2 z-50 text-sm text-on-surface">
+                <span class="material-symbols-outlined text-outline text-sm">arrow_drop_down</span>
+                
+                <!-- Dropdown Menu inside button -->
+                <div id="profileMenu" class="hidden absolute right-0 top-12 w-48 bg-white border border-outline-variant rounded-xl shadow-xl py-2 z-50 text-sm text-on-surface">
+                    <a href="#" onclick="openSettingsModal(); return false;" class="flex items-center gap-2 px-4 py-2 hover:bg-background transition-colors">
+                        <span class="material-symbols-outlined text-sm">settings</span>
+                        <span>System Settings</span>
+                    </a>
+                    <hr class="border-outline-variant/30 my-1">
                     <button onclick="logout()" class="w-full flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 transition-colors text-left">
                         <span class="material-symbols-outlined text-sm">logout</span>
                         <span>Log Out</span>
                     </button>
                 </div>
-            </div>
+            </button>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="md:ml-64 pt-20 px-6 pb-10 min-h-screen">
+    <main class="flex-grow md:pl-64 pt-20 px-6 max-w-[1600px] mx-auto space-y-6 pb-24 md:pb-8 w-full transition-all duration-300">
         <div class="max-w-7xl mx-auto">
 
             <!-- Page Header -->
@@ -773,29 +819,208 @@
             }
         }
 
+        // ---- Admin Notifications Dropdown ----
+        function toggleAdminNotifDropdown(e) {
+            if (e) e.stopPropagation();
+            const dd = document.getElementById('adminNotifDropdown');
+            if (dd) dd.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dd = document.getElementById('adminNotifDropdown');
+            const btn = document.getElementById('adminNotifBtn');
+            if (dd && !dd.classList.contains('hidden') && !dd.contains(e.target) && (btn && !btn.contains(e.target))) {
+                dd.classList.add('hidden');
+            }
+        });
+
+        async function loadAdminNotifications() {
+            const redDot = document.getElementById('adminNotifRedDot');
+            const badgeCount = document.getElementById('adminNotifBadgeCount');
+            const notifList = document.getElementById('adminNotifList');
+            if (!notifList) return;
+
+            let items = [];
+
+            try {
+                const trRes = await fetch('/api/allocations/transfer-requests');
+                const trData = await trRes.json();
+                if (trData.success && trData.data) {
+                    const pending = trData.data.filter(r => r.status === 'pending');
+                    pending.forEach(req => {
+                        items.push({
+                            id: 'tr-' + req.request_id,
+                            title: 'Pending Room Transfer Request',
+                            body: `${req.student_name} (${req.admission_number}) requested transfer to Room ${req.target_room_number} (${req.target_block}).`,
+                            icon: 'swap_horiz',
+                            iconColor: 'text-amber-600 bg-amber-100',
+                            unread: true,
+                            link: 'allocations.html',
+                            date: req.created_at
+                        });
+                    });
+                }
+
+                const unreadCount = items.filter(i => i.unread).length;
+                if (redDot) {
+                    if (unreadCount > 0) redDot.classList.remove('hidden');
+                    else redDot.classList.add('hidden');
+                }
+                if (badgeCount) {
+                    badgeCount.textContent = `${unreadCount} unread`;
+                }
+
+                if (items.length === 0) {
+                    notifList.innerHTML = '<div class="p-6 text-center text-xs text-outline font-medium">No recent notifications</div>';
+                    return;
+                }
+
+                notifList.innerHTML = items.map(item => `
+                    <a href="${item.link}" class="p-3 hover:bg-slate-50 transition-colors flex items-start gap-3 block ${item.unread ? 'bg-amber-50/40' : ''}">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${item.iconColor}">
+                            <span class="material-symbols-outlined text-base">${item.icon}</span>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="font-bold text-xs text-on-surface truncate">${item.title}</span>
+                                ${item.unread ? '<span class="w-2 h-2 rounded-full bg-red-600 shrink-0"></span>' : ''}
+                            </div>
+                            <p class="text-xs text-outline mt-0.5 leading-relaxed">${item.body}</p>
+                        </div>
+                    </a>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading admin notifications:', err);
+            }
+        }
+
+        // ---- Sidebar Collapse ----
+        function toggleSidebarCollapse() {
+            const sidebar = document.querySelector('aside');
+            const header = document.querySelector('header');
+            const main = document.querySelector('main');
+            const icon = document.getElementById('sidebarToggleIcon');
+            const isHidden = sidebar.classList.contains('hidden');
+
+            if (isHidden) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
+                if (header) header.style.left = '';
+                if (main) main.style.paddingLeft = '';
+                if (icon) icon.textContent = 'menu_open';
+                localStorage.setItem('adminSidebarCollapsed', 'false');
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
+                if (header) header.style.left = '0px';
+                if (main) main.style.paddingLeft = '1.5rem';
+                if (icon) icon.textContent = 'menu';
+                localStorage.setItem('adminSidebarCollapsed', 'true');
+            }
+        }
+
+        (function applySavedSidebarState() {
+            if (localStorage.getItem('adminSidebarCollapsed') === 'true') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    const sidebar = document.querySelector('aside');
+                    const header = document.querySelector('header');
+                    const main = document.querySelector('main');
+                    const icon = document.getElementById('sidebarToggleIcon');
+                    if (sidebar) {
+                        sidebar.classList.add('hidden');
+                        sidebar.classList.remove('flex');
+                    }
+                    if (header) header.style.left = '0px';
+                    if (main) main.style.paddingLeft = '1.5rem';
+                    if (icon) icon.textContent = 'menu';
+                });
+            }
+        })();
+
+        // ---- Profile Photo Helper ----
+        function uploadAdminPhoto(e, imgId = 'adminProfilePhotoRooms', initialsId = 'adminInitialsRooms') {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64 = evt.target.result;
+                localStorage.setItem('adminProfilePhoto', base64);
+                applyAdminPhoto(imgId, initialsId);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applyAdminPhoto(imgId = 'adminProfilePhotoRooms', initialsId = 'adminInitialsRooms') {
+            const saved = localStorage.getItem('adminProfilePhoto');
+            const img = document.getElementById(imgId);
+            const init = document.getElementById(initialsId);
+            if (saved && img) {
+                img.src = saved;
+                img.style.display = 'block';
+                if (init) init.style.display = 'none';
+            }
+        }
+
+        // ---- Settings Modal ----
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+            document.getElementById('settingsError').classList.add('hidden');
+            document.getElementById('settingsSuccess').classList.add('hidden');
+            document.getElementById('changePwdForm').reset();
+        }
+
+        async function submitAdminChangePassword(e) {
+            e.preventDefault();
+            const current_password = document.getElementById('currPwd').value.trim();
+            const new_password = document.getElementById('newPwd').value.trim();
+            const confirm_password = document.getElementById('confPwd').value.trim();
+            const errEl = document.getElementById('settingsError');
+            const okEl = document.getElementById('settingsSuccess');
+
+            errEl.classList.add('hidden');
+            okEl.classList.add('hidden');
+
+            if (new_password !== confirm_password) {
+                errEl.textContent = 'New passwords do not match.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (new_password.length < 6) {
+                errEl.textContent = 'New password must be at least 6 characters.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ current_password, new_password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    okEl.textContent = data.message;
+                    okEl.classList.remove('hidden');
+                    setTimeout(() => closeSettingsModal(), 2000);
+                } else {
+                    errEl.textContent = data.message;
+                    errEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                errEl.textContent = 'Network error. Please try again.';
+                errEl.classList.remove('hidden');
+            }
+        }
+
         // ---- Profile dropdown ----
         document.getElementById('profileBtn').addEventListener('click', function(e) {
             e.stopPropagation();
             document.getElementById('profileMenu').classList.toggle('hidden');
         });
         document.addEventListener('click', () => document.getElementById('profileMenu').classList.add('hidden'));
-
-        // ---- Mobile sidebar ----
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.querySelector('aside');
-        if (mobileMenuBtn && sidebar) {
-            mobileMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                sidebar.classList.toggle('hidden');
-                sidebar.classList.toggle('flex');
-            });
-            document.addEventListener('click', (e) => {
-                if (window.innerWidth < 768 && !sidebar.contains(e.target) && e.target !== mobileMenuBtn) {
-                    sidebar.classList.add('hidden');
-                    sidebar.classList.remove('flex');
-                }
-            });
-        }
 
         // ---- Logout ----
         function logout() {
@@ -807,6 +1032,46 @@
         // ---- Init ----
         applyBlockDefaults();
         checkAuth();
+        loadAdminNotifications();
+        applyAdminPhoto();
     </script>
+
+    <!-- Admin Settings / Change Password Modal -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 relative">
+            <button onclick="closeSettingsModal()" class="absolute right-4 top-4 p-1 hover:bg-slate-100 rounded-full transition-colors">
+                <span class="material-symbols-outlined text-outline">close</span>
+            </button>
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary-container/20 text-primary mb-4">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                </div>
+                <h2 class="text-xl font-bold text-primary">Admin Account Settings</h2>
+                <p class="text-xs text-on-surface-variant mt-1">Update your portal security password.</p>
+            </div>
+            <div id="settingsError" class="hidden p-3 mb-4 text-xs rounded-lg bg-red-50 border border-red-200 text-red-700"></div>
+            <div id="settingsSuccess" class="hidden p-3 mb-4 text-xs rounded-lg bg-green-50 border border-green-200 text-green-700"></div>
+            <form id="changePwdForm" class="space-y-4" onsubmit="submitAdminChangePassword(event)">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Current Password</label>
+                    <input type="password" id="currPwd" required placeholder="••••••••"
+                        class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">New Password</label>
+                    <input type="password" id="newPwd" required placeholder="Min. 6 characters"
+                        class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-outline mb-1">Confirm New Password</label>
+                    <input type="password" id="confPwd" required placeholder="Repeat new password"
+                        class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg focus:ring-1 focus:ring-primary outline-none text-sm">
+                </div>
+                <button type="submit" class="w-full py-3 bg-[#000666] hover:bg-primary-container text-white font-semibold rounded-lg shadow transition-all text-sm">
+                    Change Password
+                </button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

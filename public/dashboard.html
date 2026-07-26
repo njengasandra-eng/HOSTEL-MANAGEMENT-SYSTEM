@@ -723,6 +723,49 @@
             });
         }
 
+        // ---- Sidebar Collapse ----
+        function toggleSidebarCollapse() {
+            const sidebar = document.querySelector('aside');
+            const header = document.querySelector('header');
+            const main = document.querySelector('main');
+            const icon = document.getElementById('sidebarToggleIcon');
+            const isHidden = sidebar.classList.contains('hidden');
+
+            if (isHidden) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
+                if (header) header.style.left = '';
+                if (main) main.style.paddingLeft = '';
+                if (icon) icon.textContent = 'menu_open';
+                localStorage.setItem('adminSidebarCollapsed', 'false');
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
+                if (header) header.style.left = '0px';
+                if (main) main.style.paddingLeft = '1.5rem';
+                if (icon) icon.textContent = 'menu';
+                localStorage.setItem('adminSidebarCollapsed', 'true');
+            }
+        }
+
+        (function applySavedSidebarState() {
+            if (localStorage.getItem('adminSidebarCollapsed') === 'true') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    const sidebar = document.querySelector('aside');
+                    const header = document.querySelector('header');
+                    const main = document.querySelector('main');
+                    const icon = document.getElementById('sidebarToggleIcon');
+                    if (sidebar) {
+                        sidebar.classList.add('hidden');
+                        sidebar.classList.remove('flex');
+                    }
+                    if (header) header.style.left = '0px';
+                    if (main) main.style.paddingLeft = '1.5rem';
+                    if (icon) icon.textContent = 'menu';
+                });
+            }
+        })();
+
         // Logout function
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
