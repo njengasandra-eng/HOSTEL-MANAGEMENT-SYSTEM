@@ -108,25 +108,43 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // 2. Check if student already has active allocation
-    const activeAlloc = db.allocations.findOne(a => a.student_id === sId && a.status === 'active');
-    if (activeAlloc) {
-      return res.status(400).json({ success: false, message: 'Student already has an active room allocation/booking.' });
+    // 2. Check if student already made a reservation/booking in the last 30 days (1 reservation per month limit)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const studentAllocations = db.allocations.find(a => a.student_id === sId && a.status !== 'inactive');
+    const recentReservation = studentAllocations.find(a => {
+      const d = new Date(a.allocation_date || a.created_at);
+      return !isNaN(d.getTime()) && d >= thirtyDaysAgo;
+    });
+
+    if (recentReservation) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'You can only reserve a room once per month.' 
+      });
     }
 
-    // 3. Check general room capacity (max 2 students)
+    // 3. Check room capacity
     if (room.current_occupancy >= room.capacity) {
-      return res.status(400).json({ success: false, message: 'Selected room is full' });
+      return res.status(400).json({ success: false, message: 'Selected room is full.' });
     }
 
     // 4. Generate unique Booking Reference Code
     const bookingCode = generateBookingCode();
 
-    // Automatically calculate expected_checkout_date as 1 month from allocation_date if not provided
+    const hasPaid = payment_amount && parseFloat(payment_amount) > 0;
+    const initialStatus = hasPaid ? 'active' : 'pending_payment';
+
+    // Calculate expected_checkout_date: 5-day reservation if unpaid, 1-month if paid
     if (!expected_checkout_date && allocation_date) {
       const allocD = new Date(allocation_date);
       if (!isNaN(allocD.getTime())) {
-        allocD.setMonth(allocD.getMonth() + 1);
+        if (hasPaid) {
+          allocD.setMonth(allocD.getMonth() + 1);
+        } else {
+          allocD.setDate(allocD.getDate() + 5);
+        }
         expected_checkout_date = allocD.toISOString().split('T')[0];
       }
     }
@@ -137,7 +155,7 @@ router.post('/', async (req, res) => {
       room_id: rId,
       allocation_date: allocation_date,
       expected_checkout_date: expected_checkout_date || null,
-      status: 'active',
+      status: initialStatus,
       booking_code: bookingCode
     });
 

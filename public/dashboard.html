@@ -348,15 +348,6 @@
                         <p class="text-[11px] text-outline">Female Students</p>
                     </div>
                 </div>
-
-                <!-- Notice Card -->
-                <div class="bg-surface-container border border-outline-variant/60 rounded-xl p-5 shadow-[0px_2px_4px_rgba(0,0,0,0.03)] space-y-2 text-sm leading-relaxed text-on-surface-variant">
-                    <div class="flex items-center gap-2 font-bold text-primary mb-1">
-                        <span class="material-symbols-outlined text-lg">info</span>
-                        <span>Notice</span>
-                    </div>
-                    <p>Annual maintenance scheduled for Batian Block, Wing B (Rooms 201-220) starting next Friday.</p>
-                </div>
             </div>
 
             <!-- Right Column: Recent Allocations & Payments -->
@@ -647,12 +638,15 @@
                         allocBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No allocations yet.</td></tr>';
                     } else {
                         allocBody.innerHTML = data.recent_allocations.slice(0, 3).map(a => {
+                            const isPending = a.status === 'pending_payment' || a.status === 'pending';
+                            const badgeClass = isPending ? 'bg-amber-100 text-amber-800' : 'bg-primary-fixed text-primary';
+                            const badgeText = isPending ? 'PENDING' : 'ASSIGNED';
                             return `
                                 <tr class="border-b border-outline-variant/20 hover:bg-outline-variant/10 transition-colors">
                                     <td class="py-3 px-2 font-semibold text-on-surface">${formatName(a.full_name)}</td>
                                     <td class="py-3 px-2 text-primary font-semibold font-mono text-xs">${a.room_number}</td>
                                     <td class="py-3 px-2">
-                                        <span class="px-2 py-0.5 bg-primary-fixed text-primary rounded text-[11px] font-bold">ASSIGNED</span>
+                                        <span class="px-2 py-0.5 ${badgeClass} rounded text-[11px] font-bold uppercase">${badgeText}</span>
                                     </td>
                                     <td class="py-3 px-2 text-right text-outline-variant text-xs">${formatDate(a.allocation_date)}</td>
                                 </tr>

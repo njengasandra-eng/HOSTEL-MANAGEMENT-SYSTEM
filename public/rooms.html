@@ -745,9 +745,9 @@
 
                 let badgeClass = '';
                 let statusText = '';
-                if (isMaint) { badgeClass = 'bg-status-maintenance'; statusText = 'Maintenance'; }
-                else if (isFull) { badgeClass = 'bg-status-occupied'; statusText = 'Full'; }
-                else { badgeClass = 'bg-status-available'; statusText = 'Available'; }
+                if (isMaint) { badgeClass = 'bg-amber-600'; statusText = 'Maintenance'; }
+                else if (room.current_occupancy > 0) { badgeClass = 'bg-[#000666]'; statusText = 'Reserved'; }
+                else { badgeClass = 'bg-emerald-700'; statusText = 'Available'; }
 
                 const occBar = room.capacity > 0 ? Math.round((room.current_occupancy / room.capacity) * 100) : 0;
 
