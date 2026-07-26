@@ -909,7 +909,7 @@
                     </td>
                     <td class="py-3 px-2 text-xs text-outline">${formatDate(item.allocation_date)}</td>
                     <td class="py-3 px-2">
-                        <span class="px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider ${badgeClass}">${item.status === 'pending_payment' ? 'PENDING' : (item.status === 'inactive' ? 'INACTIVE' : 'RESERVED')}</span>
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider ${badgeClass}">${item.status === 'pending_payment' ? 'PENDING' : (item.status === 'inactive' ? 'INACTIVE' : 'ASSIGNED')}</span>
                         <span class="text-xs text-outline font-medium">(${capText})</span>
                     </td>
                     <td class="py-3 px-2 text-right">
