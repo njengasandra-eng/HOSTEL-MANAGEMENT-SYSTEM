@@ -130,11 +130,9 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Selected room is full.' });
     }
 
-    // 4. Generate unique Booking Reference Code
-    const bookingCode = generateBookingCode();
-
     const hasPaid = payment_amount && parseFloat(payment_amount) > 0;
     const initialStatus = hasPaid ? 'active' : 'pending_payment';
+    const bookingCode = hasPaid ? generateBookingCode() : null;
 
     // Calculate expected_checkout_date: 5-day reservation if unpaid, 1-month if paid
     if (!expected_checkout_date && allocation_date) {

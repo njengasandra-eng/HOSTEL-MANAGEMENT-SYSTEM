@@ -29,9 +29,22 @@ router.get('/', (req, res) => {
       rooms = rooms.filter(r => r.block_name.toLowerCase() === blockQuery.toLowerCase());
     }
 
+    const allocations = db.allocations.find(a => a.status !== 'inactive');
+    const roomsWithStatus = rooms.map(r => {
+      const roomAlloc = allocations.find(a => a.room_id === r.room_id);
+      let allocStatus = 'available';
+      if (roomAlloc) {
+        allocStatus = roomAlloc.status === 'active' ? 'assigned' : 'reserved';
+      }
+      return {
+        ...r,
+        allocation_status: allocStatus
+      };
+    });
+
     // Sort alphabetically by room_number
-    rooms.sort((a, b) => (a.room_number || '').localeCompare(b.room_number || ''));
-    res.json({ success: true, data: rooms, count: rooms.length });
+    roomsWithStatus.sort((a, b) => (a.room_number || '').localeCompare(b.room_number || ''));
+    res.json({ success: true, data: roomsWithStatus, count: roomsWithStatus.length });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Database error: ' + error.message });
   }

@@ -181,6 +181,25 @@
                 display: block !important;
             }
 
+            body.print-invoice-mode #printInvoicePage {
+                display: block !important;
+                background: white !important;
+                color: #000 !important;
+                padding: 25px !important;
+                width: 100% !important;
+                max-width: 800px !important;
+                margin: 0 auto !important;
+                border: 2px solid #000 !important;
+                font-family: 'Inter', sans-serif !important;
+                position: relative !important;
+            }
+            body.print-invoice-mode #printInvoicePage * {
+                display: initial !important;
+            }
+            body.print-invoice-mode #printInvoicePage div {
+                display: block !important;
+            }
+
             #printReceiptPage div, #printStatementPage div {
                 display: block !important;
             }
@@ -632,6 +651,64 @@
         </div>
     </div>
 
+    <!-- PRINT INVOICE WRAPPER FOR MEDIA QUERIES -->
+    <div id="printInvoicePage" class="print-active">
+        <div class="receipt-watermark" style="color: rgba(202, 138, 4, 0.12); border-color: rgba(202, 138, 4, 0.12);">INVOICE</div>
+        <div class="receipt-header">
+            <h1>Everest Residence Halls</h1>
+            <p class="font-bold">Hostel Reservation Proforma Invoice</p>
+            <p>P.O. Box 100-00100, Nairobi | Tel: +254 700 000 000 | hostel.finance@everest.ac.ke</p>
+        </div>
+        <div class="receipt-title">MONTHLY ROOM RENT INVOICE</div>
+        <div class="receipt-grid">
+            <div><strong>Student Name:</strong> <span id="printInvStudentName">-</span></div>
+            <div><strong>Admission No:</strong> <span id="printInvStudentAdm">-</span></div>
+            <div><strong>Invoice Date:</strong> <span id="printInvDate">-</span></div>
+            <div><strong>Payment Due Date:</strong> <span id="printInvDueDate" style="color:#ba1a1a; font-weight:bold;">-</span></div>
+        </div>
+        <table class="w-full">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Billing Month</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Amount Due</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="printInvBlockRoom">Batian Block - Room 001</td>
+                    <td id="printInvBillingMonth">July 2026</td>
+                    <td style="color:#b8860b; font-weight:bold;">UNPAID (5-Day Reservation)</td>
+                    <td id="printInvAmount" style="text-align: right; font-weight:bold;">Ksh 20,000.00</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="receipt-total-box" style="border-top:2px solid #000; margin-top:15px; padding-top:10px;">
+            Total Payable Dues: <span id="printInvTotalSum" style="color:#ba1a1a;">Ksh 20,000.00</span>
+        </div>
+        
+        <div style="margin-top:20px; padding:12px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; line-height:1.5;">
+            <strong>💳 PAYMENT INSTRUCTIONS:</strong><br>
+            • <strong>M-Pesa STK Push / Paybill:</strong> Business No: <strong>400200</strong> | Account: <span id="printInvPayRef">ADM001</span><br>
+            • <strong>Bank Transfer:</strong> KCB Bank | Account No: <strong>1102233445</strong> | Everest Residence Halls<br>
+            • <em>Notice: Payment must be completed within 5 days of reservation or the room will be automatically released.</em>
+        </div>
+
+        <div class="receipt-signatures">
+            <div>
+                <div class="receipt-sig-line">Student Signature</div>
+            </div>
+            <div>
+                <div class="receipt-sig-line">University Finance Officer</div>
+            </div>
+        </div>
+        <div class="receipt-footer">
+            <p>Thank you for choosing Everest Residence Halls.</p>
+            <p>This is a system generated reservation invoice. Please present receipt after payment to complete check-in.</p>
+        </div>
+    </div>
+
     <!-- BOOKING MODAL -->
     <div id="bookingModal" class="modal fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-sm items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
@@ -1028,14 +1105,25 @@
                                     </div>
                                 </div>
                                 <div class="pt-3 border-t border-outline-variant/20 flex flex-col sm:flex-row justify-between items-center gap-3">
-                                    <div class="px-3 py-1.5 bg-primary/10 rounded-lg text-center flex-grow sm:flex-grow-0">
-                                        <span class="block text-[9px] uppercase font-bold tracking-wider text-primary">Reporting Booking Code</span>
-                                        <span class="font-mono text-sm font-extrabold tracking-wide text-primary" id="confirmCodeLabel">${myAlloc.booking_code}</span>
-                                    </div>
-                                    <button onclick="printReceipt()" class="px-3 py-1.5 bg-secondary hover:bg-secondary/95 text-white font-bold rounded-lg text-xs transition-colors flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-sm">print</span>
-                                        <span>Print Receipt</span>
-                                    </button>
+                                    ${myAlloc.status === 'pending_payment' ? `
+                                        <div class="px-3 py-1.5 bg-yellow-100 border border-yellow-300 rounded-lg text-center flex-grow sm:flex-grow-0">
+                                            <span class="block text-[9px] uppercase font-bold tracking-wider text-yellow-800">Reservation Status</span>
+                                            <span class="font-sans text-xs font-extrabold text-yellow-900">UNPAID (5-Day Grace Period)</span>
+                                        </div>
+                                        <button onclick="printInvoice()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-xs transition-colors flex items-center gap-1 shadow-sm">
+                                            <span class="material-symbols-outlined text-sm">receipt_long</span>
+                                            <span>Print Monthly Invoice</span>
+                                        </button>
+                                    ` : `
+                                        <div class="px-3 py-1.5 bg-primary/10 rounded-lg text-center flex-grow sm:flex-grow-0">
+                                            <span class="block text-[9px] uppercase font-bold tracking-wider text-primary">Reporting Booking Code</span>
+                                            <span class="font-mono text-sm font-extrabold tracking-wide text-primary" id="confirmCodeLabel">${myAlloc.booking_code || '-'}</span>
+                                        </div>
+                                        <button onclick="printReceipt()" class="px-3 py-1.5 bg-secondary hover:bg-secondary/95 text-white font-bold rounded-lg text-xs transition-colors flex items-center gap-1 shadow-sm">
+                                            <span class="material-symbols-outlined text-sm">print</span>
+                                            <span>Print Receipt</span>
+                                        </button>
+                                    `}
                                 </div>
                             </div>
                         `;
@@ -1719,6 +1807,31 @@
             
             // Set receipt class and print
             document.body.className = 'print-receipt-mode';
+            window.print();
+            document.body.className = '';
+        }
+
+        // Print Proforma Invoice for unpaid 5-day room reservation
+        function printInvoice() {
+            if (!activeBooking || !studentUser) return;
+
+            const rate = blockRates[activeBooking.block_name] || 20000;
+            const dateObj = new Date(activeBooking.allocation_date);
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const formattedMonth = `${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+
+            document.getElementById('printInvStudentName').textContent = studentUser.fullName;
+            document.getElementById('printInvStudentAdm').textContent = studentUser.username;
+            document.getElementById('printInvDate').textContent = formatDate(activeBooking.allocation_date);
+            document.getElementById('printInvDueDate').textContent = formatDate(activeBooking.expected_checkout_date);
+
+            document.getElementById('printInvBlockRoom').textContent = `${activeBooking.block_name} Block - Room ${activeBooking.room_number}`;
+            document.getElementById('printInvBillingMonth').textContent = formattedMonth;
+            document.getElementById('printInvAmount').textContent = 'Ksh ' + rate.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            document.getElementById('printInvTotalSum').textContent = 'Ksh ' + rate.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            document.getElementById('printInvPayRef').textContent = studentUser.username || 'ADM001';
+
+            document.body.className = 'print-invoice-mode';
             window.print();
             document.body.className = '';
         }
