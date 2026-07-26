@@ -273,8 +273,8 @@ router.post('/student/reset-password', async (req, res) => {
   }
 });
 
-// POST /api/logout
-router.post('/logout', (req, res) => {
+// POST /api/auth/logout
+router.post('/auth/logout', (req, res) => {
   const role = req.session.role;
   const username = req.session.username;
 
