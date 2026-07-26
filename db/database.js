@@ -383,10 +383,7 @@ const db = {
 // ─── Initialize & Seed ────────────────────────────────────────────────────────
 
 async function initializeDatabase() {
-  const mongoUri = process.env.MONGODB_URI;
-  if (!mongoUri) {
-    throw new Error('MONGODB_URI environment variable is not set!');
-  }
+  const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://nyumuharon:haron123@cluster0.mongodb.net/hostel_db?retryWrites=true&w=majority';
 
   console.log('Connecting to MongoDB Atlas...');
   await mongoose.connect(mongoUri);
