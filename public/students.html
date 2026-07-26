@@ -532,42 +532,43 @@
             const header = document.querySelector('header');
             const main = document.querySelector('main');
             const icon = document.getElementById('sidebarToggleIcon');
-            const isHidden = sidebar.classList.contains('hidden');
+            if (!sidebar) return;
 
-            if (isHidden) {
-                sidebar.classList.remove('hidden');
-                sidebar.classList.add('flex');
+            const isCollapsed = sidebar.style.display === 'none' || sidebar.classList.contains('sidebar-collapsed');
+
+            if (isCollapsed) {
+                sidebar.style.display = '';
+                sidebar.classList.remove('sidebar-collapsed', 'hidden');
                 if (header) header.style.left = '';
-                if (main) main.style.marginLeft = '';
+                if (main) main.style.paddingLeft = '';
                 if (icon) icon.textContent = 'menu_open';
                 localStorage.setItem('adminSidebarCollapsed', 'false');
             } else {
-                sidebar.classList.add('hidden');
-                sidebar.classList.remove('flex');
+                sidebar.style.display = 'none';
+                sidebar.classList.add('sidebar-collapsed');
                 if (header) header.style.left = '0px';
-                if (main) main.style.marginLeft = '0px';
+                if (main) main.style.paddingLeft = '1.5rem';
                 if (icon) icon.textContent = 'menu';
                 localStorage.setItem('adminSidebarCollapsed', 'true');
             }
         }
 
-        (function applySavedSidebarState() {
+        function applySavedSidebarState() {
             if (localStorage.getItem('adminSidebarCollapsed') === 'true') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    const sidebar = document.querySelector('aside');
-                    const header = document.querySelector('header');
-                    const main = document.querySelector('main');
-                    const icon = document.getElementById('sidebarToggleIcon');
-                    if (sidebar) {
-                        sidebar.classList.add('hidden');
-                        sidebar.classList.remove('flex');
-                    }
-                    if (header) header.style.left = '0px';
-                    if (main) main.style.marginLeft = '0px';
-                    if (icon) icon.textContent = 'menu';
-                });
+                const sidebar = document.querySelector('aside');
+                const header = document.querySelector('header');
+                const main = document.querySelector('main');
+                const icon = document.getElementById('sidebarToggleIcon');
+                if (sidebar) {
+                    sidebar.style.display = 'none';
+                    sidebar.classList.add('sidebar-collapsed');
+                }
+                if (header) header.style.left = '0px';
+                if (main) main.style.paddingLeft = '1.5rem';
+                if (icon) icon.textContent = 'menu';
             }
-        })();
+        }
+        document.addEventListener('DOMContentLoaded', applySavedSidebarState);
 
         const form = document.getElementById('studentForm');
         const tableBody = document.getElementById('studentTableBody');
