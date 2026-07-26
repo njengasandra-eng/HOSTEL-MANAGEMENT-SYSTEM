@@ -152,7 +152,11 @@ router.post('/', async (req, res) => {
     // 5. Create allocation
     const newAlloc = await db.allocations.insert({
       student_id: sId,
+      student_name: student.full_name,
+      admission_number: student.admission_number,
       room_id: rId,
+      room_number: room.room_number,
+      block_name: room.block_name,
       allocation_date: allocation_date,
       expected_checkout_date: expected_checkout_date || null,
       status: initialStatus,
