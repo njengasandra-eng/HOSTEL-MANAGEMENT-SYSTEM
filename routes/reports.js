@@ -258,4 +258,50 @@ router.get('/ledgers', requireAdmin, (req, res) => {
   }
 });
 
+// GET /api/notices - List all notices
+router.get('/notices', (req, res) => {
+  try {
+    const notices = db.notices.find();
+    notices.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    res.json({ success: true, data: notices });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
+// POST /api/notices - Admin creates a notice
+router.post('/notices', requireAdmin, async (req, res) => {
+  try {
+    const { title, message, block_name, room_range } = req.body;
+    if (!title || !message) {
+      return res.status(400).json({ success: false, message: 'Title and message are required' });
+    }
+    const newNotice = await db.notices.insert({
+      title: title.trim(),
+      message: message.trim(),
+      block_name: block_name || 'All Blocks',
+      room_range: room_range || 'All Rooms',
+      posted_by: 'Admin'
+    });
+    res.json({ success: true, message: 'Notice posted successfully', notice: newNotice });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
+// DELETE /api/notices/:id - Admin deletes a notice
+router.delete('/notices/:id', requireAdmin, (req, res) => {
+  try {
+    const noticeId = parseInt(req.params.id);
+    const deleted = db.notices.delete(noticeId);
+    if (deleted) {
+      res.json({ success: true, message: 'Notice deleted successfully' });
+    } else {
+      res.status(404).json({ success: false, message: 'Notice not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
 module.exports = router;

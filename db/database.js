@@ -130,6 +130,18 @@ const transferRequestSchema = new mongoose.Schema({
 });
 const TransferRequest = mongoose.model('TransferRequest', transferRequestSchema);
 
+// Notices
+const noticeSchema = new mongoose.Schema({
+  notice_id:  { type: Number, unique: true },
+  title:      { type: String, required: true },
+  message:    { type: String, required: true },
+  block_name: { type: String, default: 'Batian' },
+  room_range: { type: String, default: 'BAT-001 to BAT-005' },
+  posted_by:  { type: String, default: 'Admin' },
+  created_at: { type: String, default: () => new Date().toISOString() }
+});
+const Notice = mongoose.model('Notice', noticeSchema);
+
 // ─── In-memory cache (populated at startup) ───────────────────────────────────
 let cache = {
   users: [],
@@ -138,7 +150,8 @@ let cache = {
   allocations: [],
   payments: [],
   audit_logs: [],
-  transfer_requests: []
+  transfer_requests: [],
+  notices: []
 };
 
 async function loadCache() {
@@ -149,6 +162,7 @@ async function loadCache() {
   cache.payments          = (await Payment.find().lean()).map(mongoToPlain);
   cache.audit_logs        = (await AuditLog.find().lean()).map(mongoToPlain);
   cache.transfer_requests = (await TransferRequest.find().lean()).map(mongoToPlain);
+  cache.notices           = (await Notice.find().lean()).map(mongoToPlain);
 }
 
 function mongoToPlain(doc) {
@@ -166,6 +180,7 @@ function saveAllocation(data)      { Allocation.findOneAndUpdate({ allocation_id
 function savePayment(data)         { Payment.findOneAndUpdate({ payment_id: data.payment_id }, data, { upsert: true }).exec().catch(console.error); }
 function saveAuditLog(data)        { AuditLog.findOneAndUpdate({ log_id: data.log_id }, data, { upsert: true }).exec().catch(console.error); }
 function saveTransferRequest(data) { TransferRequest.findOneAndUpdate({ request_id: data.request_id }, data, { upsert: true }).exec().catch(console.error); }
+function saveNotice(data)          { Notice.findOneAndUpdate({ notice_id: data.notice_id }, data, { upsert: true }).exec().catch(console.error); }
 
 function deleteFromDB(Model, query) { Model.deleteOne(query).exec().catch(console.error); }
 
@@ -349,6 +364,27 @@ const db = {
     }
   },
 
+  notices: {
+    find:    (fn) => fn ? cache.notices.filter(fn) : [...cache.notices],
+    findOne: (fn) => cache.notices.find(fn) || null,
+    insert:  async (data) => {
+      const id = await nextId('notice_id');
+      const obj = { notice_id: id, ...data, created_at: new Date().toISOString() };
+      cache.notices.push(obj);
+      saveNotice(obj);
+      return obj;
+    },
+    delete: (noticeId) => {
+      const before = cache.notices.length;
+      cache.notices = cache.notices.filter(n => n.notice_id !== parseInt(noticeId));
+      if (cache.notices.length < before) {
+        deleteFromDB(Notice, { notice_id: parseInt(noticeId) });
+        return true;
+      }
+      return false;
+    }
+  },
+
   checkAndExpireLeases: () => {
     const nowStr = new Date().toISOString().split('T')[0];
     cache.allocations.forEach(alloc => {
@@ -452,6 +488,18 @@ async function initializeDatabase() {
   if (roomsAdded > 0) {
     console.log(`✓ Seeded ${roomsAdded} new rooms to complete 50 rooms per block (Batian, Nelion - 2 beds each)`);
     await loadCache();
+  }
+
+  // Seed default notice using actual room numbers
+  if (cache.notices.length === 0) {
+    await db.notices.insert({
+      title: 'Batian Block Room Maintenance',
+      message: 'Routine maintenance scheduled for Batian Block (Rooms BAT-001 to BAT-005) starting next Friday. Please contact hostel warden for details.',
+      block_name: 'Batian',
+      room_range: 'BAT-001 to BAT-005',
+      posted_by: 'Admin'
+    });
+    console.log('✓ Seeded default hostel notice');
   }
 
   console.log('MongoDB database initialization complete.');
