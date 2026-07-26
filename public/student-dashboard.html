@@ -305,7 +305,7 @@
     <!-- Top Navigation Bar -->
     <header class="fixed top-0 left-0 w-full z-40 flex justify-between items-center px-4 h-16 bg-surface border-b border-outline-variant shadow-sm">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-secondary text-lg">🎓</div>
+            <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-secondary text-lg"></div>
             <h1 class="text-headline-sm font-headline-sm font-bold text-primary">Student Portal</h1>
         </div>
 
@@ -343,7 +343,7 @@
                 <!-- Profile Photo Avatar with Click-to-Upload -->
                 <div class="relative group cursor-pointer w-10 h-10 rounded-full border border-outline-variant overflow-hidden flex items-center justify-center bg-secondary-container shadow-sm" onclick="document.getElementById('studentPhotoInput').click()" title="Click to upload profile photo">
                     <img id="studentProfilePhotoImg" class="w-full h-full object-cover" src="" style="display:none">
-                    <span id="studentInitialsAvatar" class="text-secondary font-bold text-sm">👤</span>
+                    <span id="studentInitialsAvatar" class="text-secondary font-bold text-sm"></span>
                     <div class="hidden group-hover:flex absolute inset-0 bg-black/40 items-center justify-center rounded-full">
                         <span class="material-symbols-outlined text-white text-xs">photo_camera</span>
                     </div>
@@ -377,7 +377,7 @@
 
     <!-- Floating Toast Alert -->
     <div class="fixed top-20 right-6 z-50 bg-green-50 border border-green-200 p-4 rounded-xl shadow-xl items-center gap-3 max-w-sm animate-bounce confirmation-alert" id="confirmAlert">
-        <span class="text-2xl">🎉</span>
+        <span class="text-2xl"></span>
         <div class="text-xs">
             <div class="font-bold text-green-800">Booking Confirmed!</div>
             <div class="text-green-700 mt-0.5">Your room is reserved. Code: <span class="font-mono font-bold" id="confirmCode">BK-XXXXXX</span></div>
@@ -390,7 +390,7 @@
         <!-- Feedback Alert Banner for Approved/Rejected Transfer Request -->
         <section id="transferFeedbackCard" class="hidden p-4 rounded-2xl shadow-sm border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all">
             <div class="flex items-center gap-3">
-                <span id="transferFeedbackIcon" class="text-3xl">✅</span>
+                <span id="transferFeedbackIcon" class="text-3xl"></span>
                 <div>
                     <div id="transferFeedbackTitle" class="font-bold text-sm">Room Transfer Request Status</div>
                     <div id="transferFeedbackMsg" class="text-xs mt-0.5 leading-relaxed">Your transfer request feedback.</div>
@@ -428,7 +428,7 @@
                     </h3>
                     
                     <div id="bookingStatusSection" class="text-center py-6">
-                        <div class="text-4xl text-outline mb-2">❓</div>
+                        <div class="text-4xl text-outline mb-2"></div>
                         <p class="text-sm text-outline mb-4">You do not have any active room bookings.</p>
                         <p class="text-xs text-outline-variant max-w-sm mx-auto">Please find an available room below, finalize the booking process, and secure your room.</p>
                     </div>
@@ -700,7 +700,7 @@
         </div>
         
         <div style="margin-top:20px; padding:12px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; line-height:1.5;">
-            <strong>💳 PAYMENT INSTRUCTIONS:</strong><br>
+            <strong> PAYMENT INSTRUCTIONS:</strong><br>
             • <strong>M-Pesa STK Push / Paybill:</strong> Business No: <strong>400200</strong> | Account: <span id="printInvPayRef">ADM001</span><br>
             • <strong>Bank Transfer:</strong> KCB Bank | Account No: <strong>1102233445</strong> | Everest Residence Halls<br>
             • <em>Notice: Payment must be completed within 5 days of reservation or the room will be automatically released.</em>
@@ -765,7 +765,7 @@
                     <button type="button" id="btnStkPush" onclick="simulateStkPush()" class="w-full py-2 bg-secondary hover:bg-secondary/90 text-white font-bold rounded-lg text-xs shadow transition-colors">Request M-Pesa STK Push PIN Prompt</button>
                     
                     <div id="stkStatusBlock" class="hidden p-3 bg-teal-50 border border-teal-200 rounded-lg text-xs leading-relaxed text-secondary space-y-1">
-                        <div id="stkStatusText">📱 PIN prompt triggered...</div>
+                        <div id="stkStatusText"> PIN prompt triggered...</div>
                         <div id="stkCountdown" class="font-semibold">Please type PIN on your phone screen...</div>
                         <a href="#" onclick="switchToManualMpesa(event)" class="block text-xs text-secondary underline mt-1 font-bold">Cancel STK and Enter Code Manually</a>
                     </div>
@@ -779,7 +779,7 @@
                 <!-- 2. Bank fields -->
                 <div id="bankCheckout" class="hidden space-y-3">
                     <div class="p-3 bg-slate-50 border border-outline-variant rounded-lg text-xs text-outline leading-relaxed">
-                        🏦 <strong>University Bank Details:</strong><br>
+                         <strong>University Bank Details:</strong><br>
                         Bank: Kenya Commercial Bank (KCB)<br>
                         Account: 1102233445 (Everest Residence Division)<br>
                         Branch: University Way, Nairobi
@@ -818,7 +818,7 @@
 
                 <!-- 4. Lease field -->
                 <div id="leaseCheckout" class="hidden p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs leading-relaxed text-yellow-800">
-                    ⚠️ <strong>Unpaid Lease Policy:</strong><br>
+                    ️ <strong>Unpaid Lease Policy:</strong><br>
                     You are checking in under a temporary unpaid lease. You must clear the initial monthly fee within a **5-day grace period** or the reservation booking will expire and be released back to the room pool automatically.
                 </div>
 
@@ -887,7 +887,7 @@
                         <button type="button" id="btnGenStkPush" onclick="simulateGenStkPush()" class="w-full py-2 bg-secondary hover:bg-secondary/90 text-white font-bold rounded-lg text-xs shadow transition-colors">Request M-Pesa STK Push PIN Prompt</button>
                         
                         <div id="genStkStatusBlock" class="hidden p-3 bg-teal-50 border border-teal-200 rounded-lg text-xs leading-relaxed text-secondary space-y-1">
-                            <div id="genStkStatusText">📱 PIN prompt triggered...</div>
+                            <div id="genStkStatusText"> PIN prompt triggered...</div>
                             <div id="genStkCountdown" class="font-semibold">Please type PIN on your phone screen...</div>
                             <a href="#" onclick="switchToManualGenMpesa(event)" class="block text-xs text-secondary underline mt-1 font-bold">Cancel STK and Enter Code Manually</a>
                         </div>
@@ -901,7 +901,7 @@
                     <!-- Bank transfer -->
                     <div id="genBankCheckout" class="hidden space-y-3">
                         <div class="p-3 bg-slate-50 border border-outline-variant rounded-lg text-xs text-outline leading-relaxed">
-                            🏦 <strong>University Bank Details:</strong><br>
+                             <strong>University Bank Details:</strong><br>
                             Bank: Kenya Commercial Bank (KCB)<br>
                             Account: 1102233445 (Everest Residence Division)<br>
                             Branch: University Way, Nairobi
@@ -1174,7 +1174,7 @@
                 
                 activeBooking = null;
                 statusSection.innerHTML = `
-                    <div class="no-booking-icon">❓</div>
+                    <div class="no-booking-icon"></div>
                     <div class="no-booking-text text-sm text-outline">You do not have any active room bookings.</div>
                     <p class="text-xs text-outline-variant max-w-sm mx-auto mt-2">Find an available room in the directory below, pay the initial fee, and secure your room.</p>
                 `;
@@ -1362,7 +1362,7 @@
                 document.getElementById('bookingModal').classList.add('show');
                 document.getElementById('bookingForm').style.display = 'none';
                 document.getElementById('paymentFooterButtons').style.display = 'none';
-                showBookingModalError(`⚠️ Active Booking Detected! You already have an active room allocation (Room ${activeBooking.room_number}). To change rooms, please contact hostel administration.`);
+                showBookingModalError(`️ Active Booking Detected! You already have an active room allocation (Room ${activeBooking.room_number}). To change rooms, please contact hostel administration.`);
                 return;
             }
             
@@ -1452,7 +1452,7 @@
             document.getElementById('paymentFooterButtons').style.display = 'none'; // hide buttons during push
 
             let seconds = 6;
-            document.getElementById('stkStatusText').innerHTML = `📱 STK PIN prompt sent to ${phone}...`;
+            document.getElementById('stkStatusText').innerHTML = ` STK PIN prompt sent to ${phone}...`;
             document.getElementById('stkCountdown').innerHTML = `Please enter your PIN on your phone handset... (${seconds}s remaining)`;
 
             stkInterval = setInterval(async () => {
@@ -1564,7 +1564,7 @@
                         
                         const allocData = await allocResponse.json();
                         if (allocResponse.status === 401 || allocData.message === 'Unauthorized') {
-                            showBookingModalError('🔒 Session Expired. Your session has expired. Please log in again.');
+                            showBookingModalError(' Session Expired. Your session has expired. Please log in again.');
                             setTimeout(() => { window.location.href = 'student-login.html'; }, 2000);
                             return;
                         }
@@ -1671,7 +1671,7 @@
             document.getElementById('genPaymentFooterButtons').style.display = 'none'; // Hide buttons during auto push
 
             let seconds = 6;
-            document.getElementById('genStkStatusText').innerHTML = `📱 STK PIN prompt sent to ${phone}...`;
+            document.getElementById('genStkStatusText').innerHTML = ` STK PIN prompt sent to ${phone}...`;
             document.getElementById('genStkCountdown').innerHTML = `Please enter your PIN on your phone handset... (${seconds}s remaining)`;
 
             genStkInterval = setInterval(async () => {
@@ -2153,12 +2153,12 @@
 
                         if (unreadFeedback.status === 'approved') {
                             card.className = 'p-4 rounded-2xl shadow-sm border border-green-300 bg-green-50 text-green-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
-                            icon.textContent = '🎉';
+                            icon.textContent = '';
                             title.textContent = 'Room Transfer Approved!';
                             msg.textContent = `Your room transfer request to Room ${unreadFeedback.target_room_number} (${unreadFeedback.target_block}) was APPROVED by management. Your room allocation has been updated.`;
                         } else {
                             card.className = 'p-4 rounded-2xl shadow-sm border border-red-300 bg-red-50 text-red-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
-                            icon.textContent = '❌';
+                            icon.textContent = '';
                             title.textContent = 'Room Transfer Request Rejected';
                             msg.textContent = `Your transfer request to Room ${unreadFeedback.target_room_number} (${unreadFeedback.target_block}) was REJECTED by management. Remarks: ${unreadFeedback.admin_remarks || 'None'}`;
                         }

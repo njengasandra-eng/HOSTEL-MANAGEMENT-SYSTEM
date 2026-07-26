@@ -56,18 +56,18 @@ app.get('*', (req, res) => {
 // ── Start server INSTANTLY ──────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('====================================================');
-  console.log(`🏫 Hostel Management System is running on port ${PORT}!`);
+  console.log(` Hostel Management System is running on port ${PORT}!`);
   console.log('====================================================');
 });
 
 // Asynchronously initialize database connection without blocking HTTP server
 (async () => {
   try {
-    console.log('🔌 Connecting to MongoDB Atlas...');
+    console.log(' Connecting to MongoDB Atlas...');
     await initializeDatabase();
     global.dbReady = true;
-    console.log('✓ Database connected and fully ready!');
+    console.log(' Database connected and fully ready!');
   } catch (err) {
-    console.error('❌ Database connection notice:', err.message);
+    console.error(' Database connection notice:', err.message);
   }
 })();

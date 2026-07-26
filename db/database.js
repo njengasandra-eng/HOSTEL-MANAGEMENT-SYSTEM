@@ -423,17 +423,17 @@ async function initializeDatabase() {
 
   console.log('Connecting to MongoDB Atlas...');
   await mongoose.connect(mongoUri);
-  console.log('✓ Connected to MongoDB Atlas');
+  console.log(' Connected to MongoDB Atlas');
 
   // Load all data into cache
   await loadCache();
-  console.log('✓ Data loaded into memory cache');
+  console.log(' Data loaded into memory cache');
 
   // Automatic cleanup of legacy Lenana records from MongoDB Atlas
   const deletedRooms = await Room.deleteMany({ $or: [{ block_name: /lenana/i }, { room_number: /^LEN-/i }] });
   const deletedPayments = await Payment.deleteMany({ hostel_block: /lenana/i });
   if (deletedRooms.deletedCount > 0 || deletedPayments.deletedCount > 0) {
-    console.log(`✓ Cleaned legacy Lenana records from MongoDB Atlas (${deletedRooms.deletedCount} rooms, ${deletedPayments.deletedCount} payments)`);
+    console.log(` Cleaned legacy Lenana records from MongoDB Atlas (${deletedRooms.deletedCount} rooms, ${deletedPayments.deletedCount} payments)`);
     await loadCache();
   }
 
@@ -441,7 +441,7 @@ async function initializeDatabase() {
   if (!cache.users.find(u => u.username === 'admin')) {
     const hash = await bcrypt.hash('admin123', 10);
     await db.users.insert({ username: 'admin', password: hash, email: 'admin@hostel.com', full_name: 'Administrator', role: 'admin' });
-    console.log('✓ Default admin seeded (admin / admin123)');
+    console.log(' Default admin seeded (admin / admin123)');
   }
 
   // Seed students
@@ -453,7 +453,7 @@ async function initializeDatabase() {
       { admission_number: 'ADM003', password: studentHash, gender: 'male',   full_name: 'Daniel Otieno',  email: 'daniel@example.com', phone: '0712345690', course: 'Engineering',       date_of_admission: '2024-03-20', next_of_kin_name: 'Rose Otieno',    next_of_kin_phone: '0745678901', status: 'active' }
     ];
     for (const s of samples) await db.students.insert(s);
-    console.log('✓ Sample students seeded');
+    console.log(' Sample students seeded');
   }
 
   // Seed & Ensure 50 rooms per block (Batian & Nelion, 2 beds each)
@@ -496,7 +496,7 @@ async function initializeDatabase() {
   if (newRoomsToInsert.length > 0) {
     await Room.insertMany(newRoomsToInsert);
     await Counter.findByIdAndUpdate('room_id', { seq: maxRoomId }, { upsert: true });
-    console.log(`✓ Batch seeded ${newRoomsToInsert.length} new rooms instantly`);
+    console.log(` Batch seeded ${newRoomsToInsert.length} new rooms instantly`);
     await loadCache();
   }
 
@@ -509,7 +509,7 @@ async function initializeDatabase() {
       room_range: 'BAT-001 to BAT-005',
       posted_by: 'Admin'
     });
-    console.log('✓ Seeded default hostel notice');
+    console.log(' Seeded default hostel notice');
   }
 
   console.log('MongoDB database initialization complete.');

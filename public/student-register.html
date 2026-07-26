@@ -289,7 +289,7 @@
             if (raw.length === 0) {
                 hint.textContent = '';
             } else if (raw.startsWith('0') ? !/^0[71]/.test(raw) : !/^[71]/.test(raw)) {
-                hint.textContent = '⚠ Must start with 07, 01, 7 or 1';
+                hint.textContent = ' Must start with 07, 01, 7 or 1';
                 hint.style.color = '#ba1a1a';
                 wrap.classList.remove('border-outline-variant');
                 wrap.classList.add('border-red-500');
@@ -299,7 +299,7 @@
                 wrap.classList.remove('border-outline-variant');
                 wrap.classList.add('border-yellow-500');
             } else {
-                hint.textContent = '✓ Valid  →  +254' + clean;
+                hint.textContent = ' Valid  →  +254' + clean;
                 hint.style.color = '#006a60';
                 wrap.classList.remove('border-outline-variant');
                 wrap.classList.add('border-green-500');
@@ -321,7 +321,7 @@
             if (raw.length === 0) {
                 hint.textContent = '';
             } else if (clean.length === 9) {
-                hint.textContent = '✓ Valid  →  +254' + clean;
+                hint.textContent = ' Valid  →  +254' + clean;
                 hint.style.color = '#006a60';
                 wrap.classList.remove('border-outline-variant');
                 wrap.classList.add('border-green-500');

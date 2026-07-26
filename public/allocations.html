@@ -706,7 +706,7 @@
                 const res = await fetch(`/api/allocations/transfer-requests/${reqId}/approve`, { method: 'POST' });
                 const data = await res.json();
                 if (!data.success) throw new Error(data.message);
-                showMessage('success', '✓ ' + data.message);
+                showMessage('success', ' ' + data.message);
                 await Promise.all([loadTransferRequests(), loadAllocations(), loadOptions()]);
             } catch (err) {
                 showMessage('error', err.message);
@@ -798,12 +798,12 @@
 
             if (selectedStudent) {
                 studentIdHidden.value = selectedStudent.student_id;
-                detailsSpan.textContent = `✓ Student Found: ${selectedStudent.full_name} (${selectedStudent.gender.toUpperCase()})`;
+                detailsSpan.textContent = ` Student Found: ${selectedStudent.full_name} (${selectedStudent.gender.toUpperCase()})`;
                 detailsSpan.classList.remove('hidden', 'text-red-600');
                 detailsSpan.classList.add('text-green-700');
             } else {
                 studentIdHidden.value = '';
-                detailsSpan.textContent = adm ? '✗ Student not found in directory' : '';
+                detailsSpan.textContent = adm ? ' Student not found in directory' : '';
                 if (adm) {
                     detailsSpan.classList.remove('hidden', 'text-green-700');
                     detailsSpan.classList.add('text-red-600');

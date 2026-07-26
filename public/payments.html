@@ -743,7 +743,7 @@
 
             if (info) {
                 studentIdHidden.value = info.student_id;
-                detailsSpan.textContent = `✓ Allocated: ${info.student_name} (${info.room_number})`;
+                detailsSpan.textContent = ` Allocated: ${info.student_name} (${info.room_number})`;
                 detailsSpan.classList.remove('hidden', 'text-red-600');
                 detailsSpan.classList.add('text-green-700');
                 
@@ -752,7 +752,7 @@
                 updateRate();
             } else {
                 studentIdHidden.value = '';
-                detailsSpan.textContent = adm ? '✗ No active room allocation found' : '';
+                detailsSpan.textContent = adm ? ' No active room allocation found' : '';
                 if (adm) {
                     detailsSpan.classList.remove('hidden', 'text-green-700');
                     detailsSpan.classList.add('text-red-600');

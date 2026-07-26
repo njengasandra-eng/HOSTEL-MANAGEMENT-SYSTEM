@@ -213,9 +213,9 @@ router.post('/', async (req, res) => {
 
     // Simulate sending email and SMS notification
     console.log(`\n=================== NOTIFICATION DISPATCH SIMULATOR ===================`);
-    console.log(`✉️ EMAIL: Dispatched to student registration address for ${student.full_name}.`);
+    console.log(`️ EMAIL: Dispatched to student registration address for ${student.full_name}.`);
     console.log(`   Message: "Your payment of Ksh ${numericAmount} has been verified successfully. Receipt Ref: ${remarks}"`);
-    console.log(`📱 SMS: Dispatched confirmation message to registered mobile number.`);
+    console.log(` SMS: Dispatched confirmation message to registered mobile number.`);
     console.log(`   Message: "Everest Hostels: Ksh ${numericAmount} received. Ref: ${remarks}. Thank you."`);
     console.log(`========================================================================\n`);
 

@@ -825,7 +825,7 @@
                 });
                 const data = await response.json();
                 if (!data.success) throw new Error(data.message || 'Room creation failed');
-                showMessage('success', '✓ Room saved successfully.');
+                showMessage('success', ' Room saved successfully.');
                 resetForm();
                 await Promise.all([loadStats(), loadRooms()]);
             } catch (error) {
