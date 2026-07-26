@@ -142,10 +142,15 @@ router.get('/dashboard-stats', requireAdmin, (req, res) => {
     const payments = db.payments.find();
     const allocations = db.allocations.find();
 
-    const activeStudents = students.filter(s => s.status === 'active').length;
+    const totalStudents = students.length;
     const totalRooms = rooms.length;
     const totalBeds = rooms.reduce((acc, r) => acc + (r.capacity || 0), 0);
-    const occupiedBeds = rooms.reduce((acc, r) => acc + (r.current_occupancy || 0), 0);
+    
+    // Calculate occupied beds dynamically from allocations & rooms
+    const activeAllocations = allocations.filter(a => a.status === 'assigned' || a.status === 'active' || a.status === 'reserved');
+    const occupiedFromAlloc = activeAllocations.length;
+    const occupiedFromRooms = rooms.reduce((acc, r) => acc + (r.current_occupancy || 0), 0);
+    const occupiedBeds = Math.max(occupiedFromAlloc, occupiedFromRooms);
     const availableBeds = Math.max(0, totalBeds - occupiedBeds);
     
     const totalPayments = payments
@@ -153,8 +158,8 @@ router.get('/dashboard-stats', requireAdmin, (req, res) => {
       .reduce((acc, p) => acc + (p.amount || 0), 0);
 
     const stats = {
-      total_students: activeStudents,
-      all_students: students.length,
+      total_students: totalStudents,
+      all_students: totalStudents,
       total_rooms: totalRooms,
       total_beds: totalBeds,
       occupied_beds: occupiedBeds,
@@ -170,7 +175,8 @@ router.get('/dashboard-stats', requireAdmin, (req, res) => {
     rooms.forEach(r => {
       if (blocksStats[r.block_name]) {
         blocksStats[r.block_name].total += r.capacity;
-        blocksStats[r.block_name].occupied += r.current_occupancy;
+        const roomAllocCount = activeAllocations.filter(a => a.room_id === r.room_id || a.room_number === r.room_number).length;
+        blocksStats[r.block_name].occupied += Math.max(r.current_occupancy || 0, roomAllocCount);
       }
     });
 

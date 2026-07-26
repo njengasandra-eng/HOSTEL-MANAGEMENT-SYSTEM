@@ -53,25 +53,21 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ── Start server AFTER DB is ready ──────────────────────────────────────────
-async function startServer() {
+// ── Start server INSTANTLY ──────────────────────────────────────────
+app.listen(PORT, () => {
+  console.log('====================================================');
+  console.log(`🏫 Hostel Management System is running on port ${PORT}!`);
+  console.log('====================================================');
+});
+
+// Asynchronously initialize database connection without blocking HTTP server
+(async () => {
   try {
-    console.log('====================================================');
     console.log('🔌 Connecting to MongoDB Atlas...');
     await initializeDatabase();
     global.dbReady = true;
-
-    app.listen(PORT, () => {
-      console.log('====================================================');
-      console.log('🏫 Hostel Management System is running!');
-      console.log(`👉 Access URL: http://localhost:${PORT}`);
-      console.log('====================================================');
-    });
+    console.log('✓ Database connected and fully ready!');
   } catch (err) {
-    console.error('❌ Failed to connect to database:', err.message);
-    console.error('👉 Make sure MONGODB_URI environment variable is set correctly.');
-    process.exit(1);
+    console.error('❌ Database connection notice:', err.message);
   }
-}
-
-startServer();
+})();
