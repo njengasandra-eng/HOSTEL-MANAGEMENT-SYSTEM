@@ -462,31 +462,41 @@ async function initializeDatabase() {
     { blockName: 'Nelion', prefix: 'NEL-', genderPolicy: 'female' }
   ];
 
-  let roomsAdded = 0;
+  const newRoomsToInsert = [];
+  let maxRoomId = cache.rooms.reduce((max, r) => Math.max(max, r.room_id || 0), 0);
+
   for (const { blockName, prefix, genderPolicy } of blocksConfig) {
     for (let i = 1; i <= 50; i++) {
       const roomNumber = prefix + String(i).padStart(3, '0');
       const existing = cache.rooms.find(r => r.room_number === roomNumber);
       if (!existing) {
-        await db.rooms.insert({
+        maxRoomId++;
+        newRoomsToInsert.push({
+          room_id: maxRoomId,
           room_number: roomNumber,
           room_type: 'Double',
           capacity: 2,
+          monthly_rate: 20000,
+          price: 20000,
           current_occupancy: 0,
           status: 'available',
           floor: Math.ceil(i / 10),
           block_name: blockName,
           gender_restriction: genderPolicy,
-          amenities: `${blockName} block hostel room (${genderPolicy} restriction)`
+          amenities: `${blockName} block hostel room (${genderPolicy} restriction)`,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         });
-        roomsAdded++;
       } else if (existing.capacity !== 2 || existing.room_type !== 'Double') {
         db.rooms.update(existing.room_id, { capacity: 2, room_type: 'Double' });
       }
     }
   }
-  if (roomsAdded > 0) {
-    console.log(`✓ Seeded ${roomsAdded} new rooms to complete 50 rooms per block (Batian, Nelion - 2 beds each)`);
+
+  if (newRoomsToInsert.length > 0) {
+    await Room.insertMany(newRoomsToInsert);
+    await Counter.findByIdAndUpdate('room_id', { seq: maxRoomId }, { upsert: true });
+    console.log(`✓ Batch seeded ${newRoomsToInsert.length} new rooms instantly`);
     await loadCache();
   }
 

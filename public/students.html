@@ -216,7 +216,7 @@
             <div class="h-8 w-[1px] bg-outline-variant hidden sm:block"></div>
 
             <!-- Profile Info dropdown trigger -->
-            <button id="profileBtn" class="flex items-center gap-2 p-1 hover:bg-outline-variant/20 rounded-lg transition-colors text-left relative">
+            <div id="profileBtn" onclick="toggleProfileMenu(event)" class="flex items-center gap-2 p-1 hover:bg-outline-variant/20 rounded-lg transition-colors text-left relative cursor-pointer">
                 <div class="hidden sm:flex flex-col items-end text-xs leading-none pr-1">
                     <span id="profileName" class="font-bold text-on-surface text-sm">Administrator</span>
                     <span id="profileRole" class="text-outline text-[10px] uppercase font-semibold mt-0.5">SYSTEM ADMINISTRATOR</span>
@@ -244,7 +244,7 @@
                         <span>Log Out</span>
                     </button>
                 </div>
-            </button>
+            </div>
         </div>
     </header>
 
@@ -680,6 +680,21 @@
             reader.readAsDataURL(file);
         }
 
+        function toggleProfileMenu(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('profileMenu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch (e) {
+                console.error(e);
+            }
+            window.location.href = 'index.html';
+        }
+
         async function checkAuth() {
             try {
                 const response = await fetch('/api/auth/me');
@@ -713,6 +728,12 @@
             const btn = document.getElementById('adminNotifBtn');
             if (dd && !dd.classList.contains('hidden') && !dd.contains(e.target) && (btn && !btn.contains(e.target))) {
                 dd.classList.add('hidden');
+            }
+
+            const pm = document.getElementById('profileMenu');
+            const pb = document.getElementById('profileBtn');
+            if (pm && !pm.classList.contains('hidden') && !pm.contains(e.target) && (pb && !pb.contains(e.target))) {
+                pm.classList.add('hidden');
             }
         });
 
