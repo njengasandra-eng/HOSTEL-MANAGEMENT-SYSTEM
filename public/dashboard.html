@@ -525,7 +525,7 @@
         // Verify session status
         async function checkAuth() {
             try {
-                const response = await fetch('/api/auth/me');
+                const response = await fetch('/api/auth/me', { cache: 'no-store' });
                 const data = await response.json();
                 if (data && data.success && data.user) {
                     currentUser = data.user;
@@ -589,7 +589,9 @@
                 }
 
                 if (allocData.success && allocData.data) {
-                    const recent = allocData.data.slice(0, 3);
+                    const recent = allocData.data.sort((a, b) => {
+                        return new Date(b.allocation_date || b.created_at || 0).getTime() - new Date(a.allocation_date || a.created_at || 0).getTime();
+                    }).slice(0, 3);
                     recent.forEach(alloc => {
                         items.push({
                             id: 'alloc-' + alloc.allocation_id,
@@ -643,20 +645,16 @@
 
         // Fetch stats and lists
         async function loadDashboardData() {
-            // Fallback sample data shown when API is not yet ready
+            // Empty fallback shown when API is unavailable
             const FALLBACK_STATS = {
-                total_students: 3, total_beds: 200, occupied_beds: 1, available_beds: 199, total_payments: 20000
+                total_students: 0, total_beds: 0, occupied_beds: 0, available_beds: 0, total_payments: 0
             };
             const FALLBACK_BLOCKS = {
-                Batian: { total: 100, occupied: 1 },
-                Nelion: { total: 100, occupied: 0 }
+                Batian: { total: 0, occupied: 0 },
+                Nelion: { total: 0, occupied: 0 }
             };
-            const FALLBACK_ALLOCATIONS = [
-                { full_name: 'John Kiprop', room_number: 'BAT-001', status: 'active', allocation_date: new Date().toISOString().split('T')[0] }
-            ];
-            const FALLBACK_PAYMENTS = [
-                { transaction_id: 'MPESA998822', amount: 20000, payment_method: 'M-PESA', status: 'completed' }
-            ];
+            const FALLBACK_ALLOCATIONS = [];
+            const FALLBACK_PAYMENTS = [];
 
             function renderStats(stats, blocks, recentAlloc, recentPay) {
                 const el = (id) => document.getElementById(id);
@@ -699,16 +697,19 @@
                 const payBody = el('recentPaymentsTable');
                 if (payBody) {
                     if (!recentPay || recentPay.length === 0) {
-                        payBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No payments recorded.</td></tr>';
+                        payBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No payments yet.</td></tr>';
                     } else {
-                        payBody.innerHTML = recentPay.slice(0, 3).map(p => {
+                        const sortedPay = [...recentPay].sort((a, b) => {
+                            return new Date(b.payment_date || b.created_at || 0).getTime() - new Date(a.payment_date || a.created_at || 0).getTime();
+                        });
+                        payBody.innerHTML = sortedPay.slice(0, 3).map(p => {
                             const isCompleted = p.status === 'completed';
-                            const badgeClass = isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+                            const badgeClass = isCompleted ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800';
                             return `<tr class="border-b border-outline-variant/20 hover:bg-outline-variant/10 transition-colors">
-                                <td class="py-3 px-2 font-semibold text-on-surface font-mono text-xs">${p.transaction_id || p.payment_id}</td>
-                                <td class="py-3 px-2 font-semibold text-primary">KES ${(p.amount || 0).toLocaleString()}</td>
-                                <td class="py-3 px-2 text-xs text-outline">${p.payment_method || 'M-PESA'}</td>
-                                <td class="py-3 px-2 text-right"><span class="px-2 py-0.5 ${badgeClass} rounded text-[11px] font-bold uppercase">${p.status || 'COMPLETED'}</span></td>
+                                <td class="py-3 px-2 font-mono text-xs font-semibold text-outline">${p.transaction_id || 'N/A'}</td>
+                                <td class="py-3 px-2 font-bold text-on-surface">KES ${Number(p.amount).toLocaleString()}</td>
+                                <td class="py-3 px-2"><span class="px-2 py-0.5 ${badgeClass} rounded text-[11px] font-bold uppercase">${p.status || 'N/A'}</span></td>
+                                <td class="py-3 px-2 text-right text-outline-variant text-xs">${formatDate(p.payment_date || p.created_at)}</td>
                             </tr>`;
                         }).join('');
                     }
@@ -835,11 +836,12 @@
         // Logout function
         async function logout() {
             try {
-                await fetch('/api/auth/logout', { method: 'POST' });
+                const res = await fetch('/api/auth/logout', { method: 'POST' });
+                await res.json();
             } catch (e) {
                 console.error(e);
             }
-            window.location.href = 'index.html';
+            window.location.replace('index.html');
         }
 
         // Profile photo upload helper

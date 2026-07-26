@@ -1043,7 +1043,7 @@
         // Verify session status
         async function checkAuth() {
             try {
-                const response = await fetch('/api/auth/me');
+                const response = await fetch('/api/auth/me', { cache: 'no-store' });
                 const data = await response.json();
                 
                 if (!data.success || data.user.role !== 'student') {
@@ -2296,11 +2296,12 @@
 
         async function logout() {
             try {
-                await fetch('/api/auth/logout', { method: 'POST' });
+                const res = await fetch('/api/auth/logout', { method: 'POST' });
+                await res.json();
             } catch (e) {
                 console.error(e);
             }
-            window.location.href = 'student-login.html';
+            window.location.replace('student-login.html');
         }
 
 

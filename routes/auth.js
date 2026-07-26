@@ -283,12 +283,16 @@ router.post('/auth/logout', (req, res) => {
       return res.status(500).json({ success: false, message: 'Failed to log out' });
     }
     res.clearCookie('HOSTELSESSID');
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
     res.json({ success: true, message: 'Logged out successfully' });
   });
 });
 
 // GET /api/auth/me (Check session status)
 router.get('/auth/me', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
   if (req.session.userId) {
     res.json({
       success: true,

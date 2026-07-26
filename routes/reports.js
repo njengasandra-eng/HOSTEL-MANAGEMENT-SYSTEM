@@ -73,7 +73,11 @@ router.get('/dashboard-stats', (req, res) => {
 
     // Recent room allocations (last 5)
     const sortedAllocations = [...allocations]
-      .sort((a, b) => (b.allocation_date || '').localeCompare(a.allocation_date || ''))
+      .sort((a, b) => {
+        const dateA = new Date(a.allocation_date || a.created_at || 0).getTime();
+        const dateB = new Date(b.allocation_date || b.created_at || 0).getTime();
+        return dateB - dateA;
+      })
       .slice(0, 5);
 
     const recentAllocations = sortedAllocations.map(a => {

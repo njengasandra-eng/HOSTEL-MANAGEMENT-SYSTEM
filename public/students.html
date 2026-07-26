@@ -699,7 +699,7 @@
 
         async function checkAuth() {
             try {
-                const response = await fetch('/api/auth/me');
+                const response = await fetch('/api/auth/me', { cache: 'no-store' });
                 const data = await response.json();
             } catch (err) {
                 console.error(err);

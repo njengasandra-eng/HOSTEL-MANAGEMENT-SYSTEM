@@ -461,7 +461,8 @@ async function initializeDatabase() {
     console.log(' Default admin seeded (admin / admin123)');
   }
 
-  // Seed students
+  // Seed students (DISABLED per user request)
+  /*
   if (cache.students.length === 0) {
     const studentHash = await bcrypt.hash('student123', 10);
     const samples = [
@@ -472,6 +473,7 @@ async function initializeDatabase() {
     for (const s of samples) await db.students.insert(s);
     console.log(' Sample students seeded');
   }
+  */
 
   // Seed & Ensure 50 rooms per block (Batian & Nelion, 2 beds each)
   const blocksConfig = [
@@ -526,7 +528,8 @@ async function initializeDatabase() {
     }
   }
 
-  // Seed default notice using actual room numbers
+  // Seed default notice using actual room numbers (DISABLED)
+  /*
   if (cache.notices.length === 0) {
     await db.notices.insert({
       title: 'Batian Block Room Maintenance',
@@ -537,8 +540,10 @@ async function initializeDatabase() {
     });
     console.log(' Seeded default hostel notice');
   }
+  */
 
-  // Seed sample allocations & payments if empty
+  // Seed sample allocations & payments if empty (DISABLED)
+  /*
   if (cache.allocations.length === 0 && cache.students.length > 0) {
     const student1 = cache.students[0];
     const room1 = cache.rooms.find(r => r.room_number === 'BAT-001');
@@ -569,6 +574,7 @@ async function initializeDatabase() {
       });
     }
   }
+  */
 
   console.log('MongoDB database initialization complete.');
 }
