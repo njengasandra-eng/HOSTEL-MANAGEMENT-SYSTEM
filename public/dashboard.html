@@ -700,7 +700,8 @@
                         payBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No payments yet.</td></tr>';
                     } else {
                         const sortedPay = [...recentPay].sort((a, b) => {
-                            return new Date(b.payment_date || b.created_at || 0).getTime() - new Date(a.payment_date || a.created_at || 0).getTime();
+                            // Use created_at (precise timestamp) first, fall back to payment_date
+                            return new Date(b.created_at || b.payment_date || 0).getTime() - new Date(a.created_at || a.payment_date || 0).getTime();
                         });
                         payBody.innerHTML = sortedPay.slice(0, 3).map(p => {
                             const isCompleted = p.status === 'completed';

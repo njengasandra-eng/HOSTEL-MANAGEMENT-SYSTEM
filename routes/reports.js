@@ -61,7 +61,7 @@ router.get('/dashboard-stats', (req, res) => {
 
     // Recent student registrations (last 5, sorted by created_at desc)
     const recentStudents = [...students]
-      .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
+      .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
       .slice(0, 5)
       .map(s => ({
         admission_number: s.admission_number,
@@ -71,12 +71,13 @@ router.get('/dashboard-stats', (req, res) => {
         created_at: s.created_at
       }));
 
-    // Recent room allocations (last 5)
+    // Recent room allocations (last 5) — sort by created_at (precise timestamp) first
     const sortedAllocations = [...allocations]
       .sort((a, b) => {
-        const dateA = new Date(a.allocation_date || a.created_at || 0).getTime();
-        const dateB = new Date(b.allocation_date || b.created_at || 0).getTime();
-        return dateB - dateA;
+        // Use created_at (ISO timestamp) for precision; fall back to allocation_date
+        const tsA = new Date(a.created_at || a.allocation_date || 0).getTime();
+        const tsB = new Date(b.created_at || b.allocation_date || 0).getTime();
+        return tsB - tsA;
       })
       .slice(0, 5);
 
