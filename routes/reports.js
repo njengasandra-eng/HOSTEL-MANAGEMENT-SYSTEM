@@ -184,11 +184,13 @@ router.get('/dashboard-stats', requireAdmin, (req, res) => {
       const student = students.find(s => s.student_id === a.student_id);
       const room = rooms.find(r => r.room_id === a.room_id);
       return {
+        allocation_id: a.allocation_id,
         allocation_date: a.allocation_date,
         full_name: student ? student.full_name : 'Unknown Student',
         room_number: room ? room.room_number : 'N/A',
         room_type: room ? room.room_type : 'N/A',
-        booking_code: a.booking_code || 'N/A'
+        booking_code: a.booking_code || 'N/A',
+        status: a.status || 'active'
       };
     });
 
