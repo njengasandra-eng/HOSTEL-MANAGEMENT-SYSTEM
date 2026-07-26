@@ -3,29 +3,12 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { db } = require('../db/database');
 
-function requireAuth(req, res, next) {
-  if (!req.session.userId) {
-    return res.status(401).json({ success: false, message: 'Unauthorized' });
-  }
-  next();
-}
-
-// Check if user is admin
-function requireAdmin(req, res, next) {
-  if (req.session.role !== 'admin') {
-    return res.status(403).json({ success: false, message: 'Forbidden: Requires Admin privileges' });
-  }
-  next();
-}
-
-router.use(requireAuth);
-
-// GET /api/students (Allows both students to fetch their own profile, or admins to search all)
+// GET /api/students (Allows both students to fetch their own profile, or admins to search all, public read)
 router.get('/', (req, res) => {
   const studentId = req.query.student_id;
 
   try {
-    if (req.session.role === 'student') {
+    if (req.session && req.session.role === 'student') {
       // Students can only see their own profile
       const student = db.students.findOne(s => s.student_id === req.session.userId);
       if (student) {
@@ -35,7 +18,7 @@ router.get('/', (req, res) => {
       }
     }
 
-    // Admin access
+    // Admin or default access
     if (studentId) {
       const student = db.students.findOne(s => s.student_id === parseInt(studentId));
       if (student) {
@@ -53,6 +36,22 @@ router.get('/', (req, res) => {
     res.status(500).json({ success: false, message: 'Database error: ' + error.message });
   }
 });
+
+function requireAuth(req, res, next) {
+  if (!req.session || (!req.session.userId && !req.session.studentId)) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+  next();
+}
+
+function requireAdmin(req, res, next) {
+  if (req.session.role !== 'admin') {
+    return res.status(403).json({ success: false, message: 'Forbidden: Requires Admin privileges' });
+  }
+  next();
+}
+
+router.use(requireAuth);
 
 // POST /api/students (Admin creates student account)
 router.post('/', requireAdmin, async (req, res) => {

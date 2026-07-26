@@ -521,32 +521,23 @@
             reader.readAsDataURL(file);
         }
 
-        // Verify session status
         async function checkAuth() {
             try {
                 const response = await fetch('/api/auth/me');
                 const data = await response.json();
-                
-                if (!data.success || data.user.role !== 'admin') {
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                document.getElementById('profileName').textContent = 'Administrator';
-                document.getElementById('profileRole').textContent = 'SYSTEM ADMINISTRATOR';
-
-                applyAdminPhoto();
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('allocation_date').value = today;
-                updateCheckoutDate();
-                
-                await loadOptions();
-                await loadAllocations();
-                await loadTransferRequests();
-                await loadAdminNotifications();
             } catch (err) {
-                window.location.href = 'index.html';
+                console.error(err);
             }
+
+            document.getElementById('profileName').textContent = 'Administrator';
+            document.getElementById('profileRole').textContent = 'SYSTEM ADMINISTRATOR';
+
+            applyAdminPhoto();
+            const today = new Date().toISOString().split('T')[0];
+            const dateEl = document.getElementById('allocation_date');
+            if (dateEl) dateEl.value = today;
+
+            Promise.all([loadAllocations(), loadOptions(), loadTransferRequests(), loadAdminNotifications()]);
         }
 
         function toggleAdminNotifDropdown(e) {

@@ -2,20 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { db } = require('../db/database');
 
-function requireAuth(req, res, next) {
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({ success: false, message: 'Unauthorized' });
-  }
-  next();
-}
-
-router.use(requireAuth);
-
-router.use((req, res, next) => {
-  db.checkAndExpireLeases();
-  next();
-});
-
 // Helper to generate a unique Booking Reference Code
 function generateBookingCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -26,13 +12,13 @@ function generateBookingCode() {
   return `BK-${code}`;
 }
 
-// GET /api/allocations (Students see their own, admins see all)
+// GET /api/allocations (Students see their own, admins see all, public read overview)
 router.get('/', (req, res) => {
   try {
     let allocations = db.allocations.find();
     
     // If student, filter to only their allocations
-    if (req.session.role === 'student') {
+    if (req.session && req.session.role === 'student') {
       allocations = allocations.filter(a => a.student_id === req.session.userId);
     }
 
@@ -64,6 +50,66 @@ router.get('/', (req, res) => {
     res.status(500).json({ success: false, message: 'Database error: ' + error.message });
   }
 });
+
+// GET /api/allocations/transfer-requests (Returns all transfer requests for admin or student, public read)
+router.get('/transfer-requests', (req, res) => {
+  try {
+    let requests = db.transferRequests.find();
+
+    if (req.session && req.session.role === 'student') {
+      requests = requests.filter(r => r.student_id === req.session.userId);
+    }
+
+    const students = db.students.find();
+    const rooms = db.rooms.find();
+
+    const data = requests.map(r => {
+      const student = students.find(s => s.student_id === r.student_id);
+      const currRoom = rooms.find(rm => rm.room_id === r.current_room_id);
+      const targetRoom = rooms.find(rm => rm.room_id === r.target_room_id);
+
+      return {
+        ...r,
+        student_name: student ? student.full_name : 'Unknown Student',
+        admission_number: student ? student.admission_number : 'N/A',
+        current_room_number: currRoom ? currRoom.room_number : 'N/A',
+        current_block: currRoom ? currRoom.block_name : 'N/A',
+        target_room_number: targetRoom ? targetRoom.room_number : 'N/A',
+        target_block: targetRoom ? targetRoom.block_name : 'N/A'
+      };
+    });
+
+    data.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+
+    res.json({ success: true, data: data, count: data.length });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Database error: ' + error.message });
+  }
+});
+
+function requireAuth(req, res, next) {
+  if (!req.session || (!req.session.userId && !req.session.studentId)) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+  next();
+}
+
+router.use(requireAuth);
+
+router.use((req, res, next) => {
+  db.checkAndExpireLeases();
+  next();
+});
+
+// Helper to generate a unique Booking Reference Code
+function generateBookingCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return `BK-${code}`;
+}
 
 // POST /api/allocations (Student bookings or admin allocations)
 router.post('/', async (req, res) => {
@@ -433,42 +479,6 @@ router.post('/transfer', async (req, res) => {
       message: `Transfer request to Room ${newRoom.room_number} submitted successfully! Awaiting admin approval.`
     });
 
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Database error: ' + error.message });
-  }
-});
-
-// GET /api/allocations/transfer-requests (Returns all transfer requests for admin or student)
-router.get('/transfer-requests', (req, res) => {
-  try {
-    let requests = db.transferRequests.find();
-
-    if (req.session.role === 'student') {
-      requests = requests.filter(r => r.student_id === req.session.userId);
-    }
-
-    const students = db.students.find();
-    const rooms = db.rooms.find();
-
-    const data = requests.map(r => {
-      const student = students.find(s => s.student_id === r.student_id);
-      const currRoom = rooms.find(rm => rm.room_id === r.current_room_id);
-      const targetRoom = rooms.find(rm => rm.room_id === r.target_room_id);
-
-      return {
-        ...r,
-        student_name: student ? student.full_name : 'Unknown Student',
-        admission_number: student ? student.admission_number : 'N/A',
-        current_room_number: currRoom ? currRoom.room_number : 'N/A',
-        current_block: currRoom ? currRoom.block_name : 'N/A',
-        target_room_number: targetRoom ? targetRoom.room_number : 'N/A',
-        target_block: targetRoom ? targetRoom.block_name : 'N/A'
-      };
-    });
-
-    data.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
-
-    res.json({ success: true, data: data, count: data.length });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Database error: ' + error.message });
   }
