@@ -2,8 +2,19 @@ const express = require('express');
 const router = express.Router();
 const { db } = require('../db/database');
 
+// GET /api/reports/notices - List all notices (Public access)
+router.get('/notices', (req, res) => {
+  try {
+    const notices = db.notices.find();
+    notices.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    res.json({ success: true, data: notices });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
 function requireAuth(req, res, next) {
-  if (!req.session || !req.session.userId) {
+  if (!req.session || (!req.session.userId && !req.session.studentId)) {
     return res.status(401).json({ success: false, message: 'Unauthorized' });
   }
   next();
@@ -253,17 +264,6 @@ router.get('/ledgers', requireAdmin, (req, res) => {
       success: true,
       data: ledgers
     });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
-  }
-});
-
-// GET /api/notices - List all notices
-router.get('/notices', (req, res) => {
-  try {
-    const notices = db.notices.find();
-    notices.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
-    res.json({ success: true, data: notices });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error: ' + error.message });
   }

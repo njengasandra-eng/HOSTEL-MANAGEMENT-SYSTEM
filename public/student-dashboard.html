@@ -1067,7 +1067,8 @@
                 document.getElementById('mpesaPhone').value = studentUser.phone ? studentUser.phone.replace('+254', '0') : '';
                 document.getElementById('genMpesaPhone').value = studentUser.phone ? studentUser.phone.replace('+254', '0') : '';
                 
-                await Promise.all([loadBookingDetails(), loadAvailableRooms(), loadLedger(), loadPaymentHistory(), loadStudentNotices()]);
+                await Promise.all([loadBookingDetails(), loadAvailableRooms(), loadLedger(), loadPaymentHistory()]);
+                loadStudentNotices();
             } catch (err) {
                 window.location.href = 'student-login.html';
             }

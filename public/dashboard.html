@@ -212,13 +212,6 @@
                 </div>
             </div>
 
-            <button class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block">
-                <span class="material-symbols-outlined text-on-surface-variant">help</span>
-            </button>
-            <button onclick="openSettingsModal()" class="p-2 rounded-full hover:bg-outline-variant/20 transition-colors active:scale-95 hidden sm:block" title="Settings">
-                <span class="material-symbols-outlined text-on-surface-variant">settings</span>
-            </button>
-
             <!-- Divider Line -->
             <div class="h-8 w-[1px] bg-outline-variant hidden sm:block"></div>
 
@@ -573,9 +566,13 @@
             let items = [];
 
             try {
-                // 1. Fetch pending transfer requests
-                const trRes = await fetch('/api/allocations/transfer-requests');
+                const [trRes, allocRes] = await Promise.all([
+                    fetch('/api/allocations/transfer-requests'),
+                    fetch('/api/allocations')
+                ]);
                 const trData = await trRes.json();
+                const allocData = await allocRes.json();
+
                 if (trData.success && trData.data) {
                     const pending = trData.data.filter(r => r.status === 'pending');
                     pending.forEach(req => {
@@ -592,9 +589,6 @@
                     });
                 }
 
-                // 2. Fetch recent allocations
-                const allocRes = await fetch('/api/allocations');
-                const allocData = await allocRes.json();
                 if (allocData.success && allocData.data) {
                     const recent = allocData.data.slice(0, 3);
                     recent.forEach(alloc => {
