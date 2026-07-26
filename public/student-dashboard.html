@@ -121,7 +121,7 @@
         }
 
         /* Print formatting */
-        #printReceiptPage, #printStatementPage {
+        #printReceiptPage, #printStatementPage, #printInvoicePage {
             display: none;
         }
 
@@ -137,9 +137,10 @@
                 -webkit-print-color-adjust: exact;
             }
             /* Hide web content */
-            body > *:not(#printReceiptPage):not(#printStatementPage),
+            body > *:not(#printReceiptPage):not(#printStatementPage):not(#printInvoicePage),
             #printReceiptPage:not(.print-active),
-            #printStatementPage:not(.print-active) {
+            #printStatementPage:not(.print-active),
+            #printInvoicePage:not(.print-active) {
                 display: none !important;
             }
             
