@@ -232,25 +232,25 @@
             <button id="profileBtn" class="flex items-center gap-2 p-1 hover:bg-outline-variant/20 rounded-lg transition-colors text-left relative">
                 <div class="hidden sm:flex flex-col items-end text-xs leading-none pr-1">
                     <span id="profileName" class="font-bold text-on-surface text-sm">Administrator</span>
-                    <span id="profileRole" class="text-outline text-[10px] uppercase font-semibold mt-0.5">ADMIN ADMIN</span>
+                    <span id="profileRole" class="text-outline text-[10px] uppercase font-semibold mt-0.5">SYSTEM ADMINISTRATOR</span>
                 </div>
                 <!-- Admin profile photo - click to change -->
-                <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden cursor-pointer relative group" onclick="document.getElementById('adminPhotoInputRooms').click()" title="Click to change photo">
-                    <img id="adminProfilePhotoRooms" class="w-full h-full object-cover" src="" style="display:none">
-                    <div id="adminInitialsRooms" class="w-full h-full flex items-center justify-center bg-primary-container text-primary font-bold text-sm">A</div>
+                <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden cursor-pointer relative group" onclick="document.getElementById('adminPhotoInput').click()" title="Click to change photo">
+                    <img id="adminProfilePhoto" class="w-full h-full object-cover" src="" style="display:none">
+                    <div id="adminInitials" class="w-full h-full flex items-center justify-center bg-primary-container text-primary font-bold text-sm">A</div>
                     <div class="hidden group-hover:flex absolute inset-0 bg-black/40 items-center justify-center rounded-full">
                         <span class="material-symbols-outlined text-white text-sm">photo_camera</span>
                     </div>
-                    <input type="file" id="adminPhotoInputRooms" accept="image/*" class="hidden" onchange="uploadAdminPhoto(event,'adminProfilePhotoRooms','adminInitialsRooms')">
+                    <input type="file" id="adminPhotoInput" accept="image/*" class="hidden" onchange="uploadAdminPhoto(event)">
                 </div>
                 <span class="material-symbols-outlined text-outline text-sm">arrow_drop_down</span>
                 
                 <!-- Dropdown Menu inside button -->
                 <div id="profileMenu" class="hidden absolute right-0 top-12 w-48 bg-white border border-outline-variant rounded-xl shadow-xl py-2 z-50 text-sm text-on-surface">
-                    <a href="#" onclick="openSettingsModal(); return false;" class="flex items-center gap-2 px-4 py-2 hover:bg-background transition-colors">
+                    <button onclick="openSettingsModal()" class="w-full flex items-center gap-2 px-4 py-2 hover:bg-background transition-colors text-left">
                         <span class="material-symbols-outlined text-sm">settings</span>
                         <span>System Settings</span>
-                    </a>
+                    </button>
                     <hr class="border-outline-variant/30 my-1">
                     <button onclick="logout()" class="w-full flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 transition-colors text-left">
                         <span class="material-symbols-outlined text-sm">logout</span>
@@ -557,6 +557,38 @@
             document.getElementById('modalError').classList.add('hidden');
         }
 
+        function applyAdminPhoto() {
+            const savedPhoto = localStorage.getItem('admin_profile_photo');
+            const imgEl = document.getElementById('adminProfilePhoto');
+            const initEl = document.getElementById('adminInitials');
+            if (!imgEl || !initEl) return;
+
+            if (savedPhoto) {
+                imgEl.src = savedPhoto;
+                imgEl.style.display = 'block';
+                initEl.style.display = 'none';
+            } else {
+                imgEl.style.display = 'none';
+                initEl.style.display = 'flex';
+            }
+        }
+
+        function uploadAdminPhoto(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Profile photo size must be less than 2MB.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64 = evt.target.result;
+                localStorage.setItem('admin_profile_photo', base64);
+                applyAdminPhoto();
+            };
+            reader.readAsDataURL(file);
+        }
+
         // ---- Auth check ----
         async function checkAuth() {
             try {
@@ -566,8 +598,9 @@
                     window.location.href = 'index.html';
                     return;
                 }
-                document.getElementById('profileName').textContent = data.user.fullName;
-                document.getElementById('profileRole').textContent = data.user.role.charAt(0).toUpperCase() + data.user.role.slice(1) + ' Admin';
+                document.getElementById('profileName').textContent = 'Administrator';
+                document.getElementById('profileRole').textContent = 'SYSTEM ADMINISTRATOR';
+                applyAdminPhoto();
                 await Promise.all([loadStats(), loadRooms(), loadAdminNotifications()]);
             } catch (err) {
                 window.location.href = 'index.html';
