@@ -644,15 +644,19 @@
         // Fetch stats and lists
         async function loadDashboardData() {
             try {
-                const response = await fetch('/api/reports/dashboard-stats');
-                const data = await response.json();
+                const [statsRes, payRes] = await Promise.all([
+                    fetch('/api/reports/dashboard-stats'),
+                    fetch('/api/payments')
+                ]);
+                const data = await statsRes.json();
+                const paymentsData = await payRes.json();
                 
-                if (data.success) {
+                if (data.success && data.stats) {
                     const stats = data.stats;
-                    document.getElementById('statStudents').textContent = Number(stats.total_students).toLocaleString();
-                    document.getElementById('statBeds').textContent = Number(stats.total_beds).toLocaleString();
-                    document.getElementById('statOccupied').textContent = Number(stats.occupied_beds).toLocaleString();
-                    document.getElementById('statAvailable').textContent = Number(stats.available_beds).toLocaleString();
+                    document.getElementById('statStudents').textContent = Number(stats.total_students || 0).toLocaleString();
+                    document.getElementById('statBeds').textContent = Number(stats.total_beds || 0).toLocaleString();
+                    document.getElementById('statOccupied').textContent = Number(stats.occupied_beds || 0).toLocaleString();
+                    document.getElementById('statAvailable').textContent = Number(stats.available_beds || 0).toLocaleString();
                     
                     const occRate = stats.total_beds > 0 ? Math.round((stats.occupied_beds / stats.total_beds) * 100) : 0;
                     document.getElementById('occupiedPercentage').textContent = `${occRate}% Total Occupancy`;
@@ -674,35 +678,59 @@
 
                     // Render recent allocations
                     const allocBody = document.getElementById('recentAllocationsTable');
-                    if (data.recent_allocations.length === 0) {
-                        allocBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No allocations yet.</td></tr>';
-                    } else {
-                        allocBody.innerHTML = data.recent_allocations.slice(0, 3).map(a => {
-                            const isPending = a.status === 'pending_payment' || a.status === 'pending';
-                            const badgeClass = isPending ? 'bg-amber-100 text-amber-800' : 'bg-primary-fixed text-primary';
-                            const badgeText = isPending ? 'PENDING' : 'ASSIGNED';
-                            return `
-                                <tr class="border-b border-outline-variant/20 hover:bg-outline-variant/10 transition-colors">
-                                    <td class="py-3 px-2 font-semibold text-on-surface">${formatName(a.full_name)}</td>
-                                    <td class="py-3 px-2 text-primary font-semibold font-mono text-xs">${a.room_number}</td>
-                                    <td class="py-3 px-2">
-                                        <span class="px-2 py-0.5 ${badgeClass} rounded text-[11px] font-bold uppercase">${badgeText}</span>
-                                    </td>
-                                    <td class="py-3 px-2 text-right text-outline-variant text-xs">${formatDate(a.allocation_date)}</td>
-                                </tr>
-                            `;
-                        }).join('');
+                    const recentAlloc = data.recent_allocations || [];
+                    if (allocBody) {
+                        if (recentAlloc.length === 0) {
+                            allocBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No allocations yet.</td></tr>';
+                        } else {
+                            allocBody.innerHTML = recentAlloc.slice(0, 3).map(a => {
+                                const isPending = a.status === 'pending_payment' || a.status === 'pending';
+                                const badgeClass = isPending ? 'bg-amber-100 text-amber-800' : 'bg-primary-fixed text-primary';
+                                const badgeText = isPending ? 'PENDING' : 'ASSIGNED';
+                                return `
+                                    <tr class="border-b border-outline-variant/20 hover:bg-outline-variant/10 transition-colors">
+                                        <td class="py-3 px-2 font-semibold text-on-surface">${formatName(a.full_name)}</td>
+                                        <td class="py-3 px-2 text-primary font-semibold font-mono text-xs">${a.room_number || 'N/A'}</td>
+                                        <td class="py-3 px-2">
+                                            <span class="px-2 py-0.5 ${badgeClass} rounded text-[11px] font-bold uppercase">${badgeText}</span>
+                                        </td>
+                                        <td class="py-3 px-2 text-right text-outline-variant text-xs">${formatDate(a.allocation_date)}</td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
                     }
+                }
 
-                    // Fetch and Render recent payments
-                    const paymentsResponse = await fetch('/api/payments');
-                    const paymentsData = await paymentsResponse.json();
-                    if (paymentsData.success) {
-                        const paymentsBody = document.getElementById('recentPaymentsTable');
-                        if (paymentsData.data.length === 0) {
+                // Render recent payments
+                if (paymentsData && paymentsData.success) {
+                    const paymentsBody = document.getElementById('recentPaymentsTable');
+                    const payList = paymentsData.data || [];
+                    if (paymentsBody) {
+                        if (payList.length === 0) {
                             paymentsBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-outline">No payments recorded.</td></tr>';
                         } else {
-                            paymentsBody.innerHTML = paymentsData.data.slice(0, 3).map(p => {
+                            paymentsBody.innerHTML = payList.slice(0, 3).map(p => {
+                                const isCompleted = p.status === 'completed';
+                                const badgeClass = isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+                                return `
+                                    <tr class="border-b border-outline-variant/20 hover:bg-outline-variant/10 transition-colors">
+                                        <td class="py-3 px-2 font-semibold text-on-surface font-mono text-xs">${p.transaction_id || p.payment_id}</td>
+                                        <td class="py-3 px-2 font-semibold text-primary">KES ${(p.amount || 0).toLocaleString()}</td>
+                                        <td class="py-3 px-2 text-xs text-outline">${p.payment_method || 'M-PESA'}</td>
+                                        <td class="py-3 px-2 text-right">
+                                            <span class="px-2 py-0.5 ${badgeClass} rounded text-[11px] font-bold uppercase">${p.status || 'COMPLETED'}</span>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading dashboard data:', err);
+            }
+        }
                                 const statusClass = p.status === 'completed' ? 'bg-green-100 text-[#006a60]' : (p.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-[#ba1a1a]');
                                 const statusText = p.status === 'completed' ? 'SUCCESS' : (p.status === 'pending' ? 'PENDING' : 'DECLINED');
                                 const amountClass = p.status === 'completed' ? 'text-[#006a60] font-semibold' : 'text-[#ba1a1a] font-semibold';
@@ -802,14 +830,13 @@
         document.addEventListener('DOMContentLoaded', applySavedSidebarState);
 
         // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                fetch('/api/logout', {
-                    method: 'POST'
-                }).then(() => {
-                    window.location.href = 'index.html';
-                });
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch (e) {
+                console.error(e);
             }
+            window.location.href = 'index.html';
         }
 
         // Profile photo upload helper

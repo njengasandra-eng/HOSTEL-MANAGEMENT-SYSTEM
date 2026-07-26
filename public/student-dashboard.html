@@ -2293,13 +2293,13 @@
             }
         }
 
-        function logout() {
-            if (confirm('Are you sure you want to log out?')) {
-                fetch('/api/logout', { method: 'POST' })
-                    .then(() => {
-                        window.location.href = 'student-login.html';
-                    });
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch (e) {
+                console.error(e);
             }
+            window.location.href = 'student-login.html';
         }
 
 
