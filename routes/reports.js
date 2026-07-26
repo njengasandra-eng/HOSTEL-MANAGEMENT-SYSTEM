@@ -13,6 +13,95 @@ router.get('/notices', (req, res) => {
   }
 });
 
+// GET /api/reports/dashboard-stats - counts and lists specifically for the main dashboard (Public/Overview)
+router.get('/dashboard-stats', (req, res) => {
+  try {
+    const students = db.students.find();
+    const rooms = db.rooms.find();
+    const payments = db.payments.find();
+    const allocations = db.allocations.find();
+
+    const totalStudents = students.length;
+    const totalRooms = rooms.length;
+    const totalBeds = rooms.reduce((acc, r) => acc + (r.capacity || 0), 0);
+    
+    // Calculate occupied beds dynamically from allocations & rooms
+    const activeAllocations = allocations.filter(a => a.status === 'assigned' || a.status === 'active' || a.status === 'reserved');
+    const occupiedFromAlloc = activeAllocations.length;
+    const occupiedFromRooms = rooms.reduce((acc, r) => acc + (r.current_occupancy || 0), 0);
+    const occupiedBeds = Math.max(occupiedFromAlloc, occupiedFromRooms);
+    const availableBeds = Math.max(0, totalBeds - occupiedBeds);
+    
+    const totalPayments = payments
+      .filter(p => p.status === 'completed')
+      .reduce((acc, p) => acc + (p.amount || 0), 0);
+
+    const stats = {
+      total_students: totalStudents,
+      all_students: totalStudents,
+      total_rooms: totalRooms,
+      total_beds: totalBeds,
+      occupied_beds: occupiedBeds,
+      available_beds: availableBeds,
+      total_payments: totalPayments
+    };
+
+    // Calculate remaining beds by blocks
+    const blocksStats = {
+      Batian: { total: 0, occupied: 0, gender: 'male' },
+      Nelion: { total: 0, occupied: 0, gender: 'female' }
+    };
+    rooms.forEach(r => {
+      if (blocksStats[r.block_name]) {
+        blocksStats[r.block_name].total += r.capacity;
+        const roomAllocCount = activeAllocations.filter(a => a.room_id === r.room_id || a.room_number === r.room_number).length;
+        blocksStats[r.block_name].occupied += Math.max(r.current_occupancy || 0, roomAllocCount);
+      }
+    });
+
+    // Recent student registrations (last 5, sorted by created_at desc)
+    const recentStudents = [...students]
+      .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
+      .slice(0, 5)
+      .map(s => ({
+        admission_number: s.admission_number,
+        full_name: s.full_name,
+        course: s.course,
+        gender: s.gender,
+        created_at: s.created_at
+      }));
+
+    // Recent room allocations (last 5)
+    const sortedAllocations = [...allocations]
+      .sort((a, b) => (b.allocation_date || '').localeCompare(a.allocation_date || ''))
+      .slice(0, 5);
+
+    const recentAllocations = sortedAllocations.map(a => {
+      const student = students.find(s => s.student_id === a.student_id);
+      const room = rooms.find(r => r.room_id === a.room_id);
+      return {
+        allocation_id: a.allocation_id,
+        allocation_date: a.allocation_date,
+        full_name: a.full_name || (student ? student.full_name : 'Unknown Student'),
+        room_number: a.room_number || (room ? room.room_number : 'N/A'),
+        room_type: room ? room.room_type : 'Double',
+        booking_code: a.booking_code || 'N/A',
+        status: a.status || 'active'
+      };
+    });
+
+    res.json({
+      success: true,
+      stats: stats,
+      blocks_stats: blocksStats,
+      recent_students: recentStudents,
+      recent_allocations: recentAllocations
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
 function requireAuth(req, res, next) {
   if (!req.session || (!req.session.userId && !req.session.studentId)) {
     return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -128,95 +217,6 @@ router.get('/', requireAdmin, (req, res) => {
       summary: summary,
       rooms: roomOccupancies,
       monthly_payments: recentPayments
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
-  }
-});
-
-// GET /api/reports/dashboard-stats - counts and lists specifically for the main dashboard
-router.get('/dashboard-stats', requireAdmin, (req, res) => {
-  try {
-    const students = db.students.find();
-    const rooms = db.rooms.find();
-    const payments = db.payments.find();
-    const allocations = db.allocations.find();
-
-    const totalStudents = students.length;
-    const totalRooms = rooms.length;
-    const totalBeds = rooms.reduce((acc, r) => acc + (r.capacity || 0), 0);
-    
-    // Calculate occupied beds dynamically from allocations & rooms
-    const activeAllocations = allocations.filter(a => a.status === 'assigned' || a.status === 'active' || a.status === 'reserved');
-    const occupiedFromAlloc = activeAllocations.length;
-    const occupiedFromRooms = rooms.reduce((acc, r) => acc + (r.current_occupancy || 0), 0);
-    const occupiedBeds = Math.max(occupiedFromAlloc, occupiedFromRooms);
-    const availableBeds = Math.max(0, totalBeds - occupiedBeds);
-    
-    const totalPayments = payments
-      .filter(p => p.status === 'completed')
-      .reduce((acc, p) => acc + (p.amount || 0), 0);
-
-    const stats = {
-      total_students: totalStudents,
-      all_students: totalStudents,
-      total_rooms: totalRooms,
-      total_beds: totalBeds,
-      occupied_beds: occupiedBeds,
-      available_beds: availableBeds,
-      total_payments: totalPayments
-    };
-
-    // Calculate remaining beds by blocks
-    const blocksStats = {
-      Batian: { total: 0, occupied: 0, gender: 'male' },
-      Nelion: { total: 0, occupied: 0, gender: 'female' }
-    };
-    rooms.forEach(r => {
-      if (blocksStats[r.block_name]) {
-        blocksStats[r.block_name].total += r.capacity;
-        const roomAllocCount = activeAllocations.filter(a => a.room_id === r.room_id || a.room_number === r.room_number).length;
-        blocksStats[r.block_name].occupied += Math.max(r.current_occupancy || 0, roomAllocCount);
-      }
-    });
-
-    // Recent student registrations (last 5, sorted by created_at desc)
-    const recentStudents = [...students]
-      .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
-      .slice(0, 5)
-      .map(s => ({
-        admission_number: s.admission_number,
-        full_name: s.full_name,
-        course: s.course,
-        gender: s.gender,
-        created_at: s.created_at
-      }));
-
-    // Recent room allocations (last 5)
-    const sortedAllocations = [...allocations]
-      .sort((a, b) => (b.allocation_date || '').localeCompare(a.allocation_date || ''))
-      .slice(0, 5);
-
-    const recentAllocations = sortedAllocations.map(a => {
-      const student = students.find(s => s.student_id === a.student_id);
-      const room = rooms.find(r => r.room_id === a.room_id);
-      return {
-        allocation_id: a.allocation_id,
-        allocation_date: a.allocation_date,
-        full_name: student ? student.full_name : 'Unknown Student',
-        room_number: room ? room.room_number : 'N/A',
-        room_type: room ? room.room_type : 'N/A',
-        booking_code: a.booking_code || 'N/A',
-        status: a.status || 'active'
-      };
-    });
-
-    res.json({
-      success: true,
-      stats: stats,
-      blocks_stats: blocksStats,
-      recent_students: recentStudents,
-      recent_allocations: recentAllocations
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error: ' + error.message });

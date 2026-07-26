@@ -2,6 +2,43 @@ const express = require('express');
 const router = express.Router();
 const { db } = require('../db/database');
 
+// GET /api/payments (Filter by student_id or status, public overview read)
+router.get('/', (req, res) => {
+  const { student_id, status } = req.query;
+
+  try {
+    let payments = db.payments.find();
+
+    if (req.session && req.session.role === 'student') {
+      payments = payments.filter(p => p.student_id === req.session.userId);
+    } else if (student_id) {
+      payments = payments.filter(p => p.student_id === parseInt(student_id));
+    }
+
+    if (status) {
+      payments = payments.filter(p => p.status === status);
+    }
+
+    const students = db.students.find();
+
+    const data = payments.map(p => {
+      const student = students.find(s => s.student_id === p.student_id);
+      return {
+        ...p,
+        full_name: student ? student.full_name : 'Unknown Student',
+        student_name: student ? student.full_name : 'Unknown Student',
+        admission_number: student ? student.admission_number : 'N/A'
+      };
+    });
+
+    data.sort((a, b) => (b.payment_date || '').localeCompare(a.payment_date || ''));
+
+    res.json({ success: true, data: data, count: data.length });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Database error: ' + error.message });
+  }
+});
+
 function requireAuth(req, res, next) {
   if (!req.session || !req.session.userId) {
     return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -105,43 +142,6 @@ router.get('/balance', (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error: ' + error.message });
-  }
-});
-
-// GET /api/payments (Filter by student_id or status, students only get their own)
-router.get('/', (req, res) => {
-  const { student_id, status } = req.query;
-
-  try {
-    let payments = db.payments.find();
-
-    if (req.session.role === 'student') {
-      payments = payments.filter(p => p.student_id === req.session.userId);
-    } else if (student_id) {
-      payments = payments.filter(p => p.student_id === parseInt(student_id));
-    }
-
-    if (status) {
-      payments = payments.filter(p => p.status === status);
-    }
-
-    const students = db.students.find();
-
-    const data = payments.map(p => {
-      const student = students.find(s => s.student_id === p.student_id);
-      return {
-        ...p,
-        full_name: student ? student.full_name : 'Unknown Student',
-        student_name: student ? student.full_name : 'Unknown Student', // backward compatibility
-        admission_number: student ? student.admission_number : 'N/A'
-      };
-    });
-
-    data.sort((a, b) => (b.payment_date || '').localeCompare(a.payment_date || ''));
-
-    res.json({ success: true, data: data, count: data.length });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Database error: ' + error.message });
   }
 });
 
